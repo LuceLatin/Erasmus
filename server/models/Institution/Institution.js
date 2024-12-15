@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const institutionSchema = new mongoose.Schema(
     {
@@ -38,6 +38,4 @@ const institutionSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const Institution = mongoose.model("Institution", institutionSchema);
-
-module.exports = Institution;
+export const Institution = mongoose.model("Institution", institutionSchema);
