@@ -11,7 +11,6 @@ async function categoriesExist() {
 }
 
 export async function seedCategories() {
-    console.log(await categoriesExist())
     if (!(await categoriesExist())) {
         console.log("Seeding categories");
         for (const category of categoriesMock.categories) {

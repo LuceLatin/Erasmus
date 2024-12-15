@@ -22,9 +22,9 @@ console.log(mongoConnection);
 
 
 // Pokretanje servera
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
-  seedDb();
+  await seedDb();
 });
 
 app.post('/api/users', async (req, res) => {
