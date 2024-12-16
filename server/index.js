@@ -4,6 +4,7 @@ const app = express();
 import dotenv from "dotenv";
 import {connectDB} from "./dbInstance.js";
 import {seedDb} from "./seed/seed.js";
+import userRouter from "./routes.js/userRoutes.js";
 dotenv.config();
 
 // Middleware
@@ -12,10 +13,8 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-// Routes primer
-app.get("/", (req, res) => {
-  res.send("API is running...");
-});
+//Sve rute vezanje za usera
+app.use(userRouter);
 
 const mongoConnection = connectDB();
 console.log(mongoConnection);
