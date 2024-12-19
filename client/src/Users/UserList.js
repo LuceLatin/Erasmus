@@ -24,7 +24,7 @@ function UserList() {
   };
 
   const handleAddUserClick = () => {
-    navigate('/userlist/adduser'); 
+    navigate('/users/add');
   };
 
   return (

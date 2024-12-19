@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const erasmusCompetitionSchema = new mongoose.Schema(
     {
@@ -34,4 +34,4 @@ const erasmusCompetitionSchema = new mongoose.Schema(
 
 const ErasmusCompetition = mongoose.model("ErasmusCompetition", erasmusCompetitionSchema);
 
-module.exports = ErasmusCompetition;
+export { ErasmusCompetition };
