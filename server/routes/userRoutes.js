@@ -15,24 +15,11 @@ userRouter.get("/api/users", async (req, res) => {
 });
 
 // Add a new user
-userRouter.post("/api/users/adduser", async (req, res) => {
+userRouter.post("/api/users/add", async (req, res) => {
     try {
-        const { firstName, lastName, username, dateOfBirth, OIB, address, city, country, email, password, role } = req.body;
 
         // Create new user instance
-        const newUser = new User({
-            firstName,
-            lastName,
-            username,
-            dateOfBirth,
-            OIB,
-            address,
-            city,
-            country,
-            email,
-            password,
-            role,
-        });
+        const newUser = new User(req.body);
 
         // Save the new user to the database
         await newUser.save();

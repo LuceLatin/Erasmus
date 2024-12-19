@@ -31,7 +31,7 @@ function AddUser() {
     e.preventDefault();
 
     // Send data to your API endpoint to create the user
-    fetch('/api/users/adduser', {
+    fetch('/api/users/add', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -41,7 +41,7 @@ function AddUser() {
       .then((response) => response.json())
       .then((data) => {
         // Redirect to user list page on success
-        navigate('/userlist');
+        navigate('/users');
       })
       .catch((error) => {
         console.error('Error adding user:', error);

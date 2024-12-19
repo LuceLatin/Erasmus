@@ -4,7 +4,8 @@ const app = express();
 import dotenv from "dotenv";
 import {connectDB} from "./dbInstance.js";
 import {seedDb} from "./seed/seed.js";
-import userRouter from "./routes.js/userRoutes.js";
+import userRouter from "./routes/userRoutes.js";
+import erasmusCompetitionRouter from "./routes/erasmusCompetition.js";
 dotenv.config();
 
 // Middleware
@@ -13,8 +14,9 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 5000;
 
-//Sve rute vezanje za usera
+//Sve rute
 app.use(userRouter);
+app.use(erasmusCompetitionRouter);
 
 const mongoConnection = connectDB();
 console.log(mongoConnection);
@@ -24,15 +26,5 @@ console.log(mongoConnection);
 app.listen(PORT, async () => {
   console.log(`Server is running on http://localhost:${PORT}`);
   await seedDb();
-});
+})
 
-app.post('/api/users', async (req, res) => {
-  try {
-    const { name, email, password } = req.body;
-    const newUser = new User({ name, email, password });
-    await newUser.save();
-    res.status(201).json(newUser);
-  } catch (error) {
-    res.status(500).json({ error: 'Error creating user' });
-  }
-});
