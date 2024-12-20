@@ -11,6 +11,7 @@ export function Header() {
                         <Nav.Link href="/">Home</Nav.Link>
                         <Nav.Link href="/users">Korisnici</Nav.Link>
                         <Nav.Link href="/erasmus-competitions/add">Dodaj natjecaj</Nav.Link>
+                        <Nav.Link href="/erasmus-competitions/list">Natjecaji</Nav.Link>
                         <Nav.Link href="#contact">prazno</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>

@@ -7,6 +7,8 @@ import UserList from './Users/UserList'; // Adjust the path if necessary
 import Homepage from './Homepage';
 import AddUser from './Users/AddUser';
 import AddErasmusCompetition from "./erasmusCompetition/AddErasmusCompetition/AddErasmusCompetition";
+import CompetitionsList from "./erasmusCompetition/CompetitionsList/CompetitionsList";
+import EditErasmusCompetition from "./erasmusCompetition/EditErasmusCompetition/EditErasmusCompetition"
 import {Header} from "./components/header/Header";
 import {Footer} from "./components/footer/Footer";
 
@@ -21,6 +23,8 @@ function App() {
             <Route path="/users" element={<UserList />} />
             <Route path="/users/add" element={<AddUser />} />
             <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
+            <Route path="erasmus-competitions/list" element={<CompetitionsList/>} />
+            <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
               <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
             </Routes>
           </Container>
