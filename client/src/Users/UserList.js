@@ -32,7 +32,7 @@ function UserList() {
     <h1 className="left-aligned heading">Korisnici</h1>
     <div className="d-flex justify-content-start mb-3">
         <Button variant="primary" onClick={handleAddUserClick}>
-          Add User
+          Dodaj korisnika
         </Button>
     </div>
     <Table striped bordered hover responsive>

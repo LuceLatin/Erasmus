@@ -11,6 +11,7 @@ import CompetitionsList from "./erasmusCompetition/CompetitionsList/Competitions
 import EditErasmusCompetition from "./erasmusCompetition/EditErasmusCompetition/EditErasmusCompetition"
 import {Header} from "./components/header/Header";
 import {Footer} from "./components/footer/Footer";
+import Login from './Authentication/login';
 
 function App() {
   return (
@@ -25,7 +26,8 @@ function App() {
             <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
             <Route path="erasmus-competitions/list" element={<CompetitionsList/>} />
             <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
-              <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
             </Routes>
           </Container>
         </div>
