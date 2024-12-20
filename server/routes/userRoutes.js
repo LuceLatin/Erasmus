@@ -1,10 +1,13 @@
 import express from "express";
 import { User } from "../models/User/User.js";
+import bcrypt from "bcryptjs";
+import { createTokens, validateToken, checkAuthorization } from "../jwt.js";
+
 
 const userRouter = express.Router();
 
 // Get all users
-userRouter.get("/api/users", async (req, res) => {
+userRouter.get("/api/users", checkAuthorization, async (req, res) => {
     try {
         const users = await User.find();
         res.status(200).json(users);
@@ -14,14 +17,24 @@ userRouter.get("/api/users", async (req, res) => {
     }
 });
 
-// Add a new user
 userRouter.post("/api/users/add", async (req, res) => {
     try {
+        const { email, username } = req.body;
 
-        // Create new user instance
+        // Check if email or username already exists in the database
+        const existingUser = await User.findOne({
+            $or: [{ email: email }, { username: username }],
+        });
+
+        if (existingUser) {
+            return res.status(400).json({
+                error: "Email or Username already exists. Please choose a different one.",
+            });
+        }
+
         const newUser = new User(req.body);
+        newUser.password = bcrypt.hashSync(newUser.password, 10);
 
-        // Save the new user to the database
         await newUser.save();
 
         res.status(201).json({ message: "User successfully created", user: newUser });
@@ -30,5 +43,6 @@ userRouter.post("/api/users/add", async (req, res) => {
         res.status(500).json({ error: "Failed to add user" });
     }
 });
+
 
 export default userRouter;
