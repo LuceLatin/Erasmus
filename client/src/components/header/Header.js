@@ -9,7 +9,7 @@ export function Header() {
     const { user } = useGetCurrentUser();
 
     const handleLogout = async () => {
-        await removeCookie("access-token");
+        await removeCookie("access-token", {path: "/"});
         navigate("/");
     };
 

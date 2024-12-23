@@ -76,7 +76,6 @@ const CompetitionsList = () => {
             <Table striped bordered hover responsive>
                 <thead>
                 <tr>
-                    <th>ID</th>
                     <th>Natječaj</th>
                     <th>Vrsta korisnika</th>
                     <th>Vrsta institucije</th>
@@ -88,7 +87,6 @@ const CompetitionsList = () => {
                 <tbody>
                 {competitions.map((competition) => (
                     <tr key={competition._id}>
-                        <td>{competition._id}</td>
                         <td>{competition.title}</td>
                         <td>{competition.role}</td>
                         <td>{competition.institutionType}</td>

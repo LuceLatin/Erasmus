@@ -8,7 +8,6 @@ export function useGetCurrentUser() {
     const { error, response, loading: loadingFetcher } = useFetcher({ endpoint: "/me" });
     const isCoordinator = user?.role === "koordinator";
 
-    console.log('useFetcher res:', response);
     useEffect(() => {
         if (response) {
             setUser(response);
