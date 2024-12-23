@@ -9,7 +9,7 @@ import AddUser from './Users/AddUser';
 import AddErasmusCompetition from "./erasmusCompetition/AddErasmusCompetition/AddErasmusCompetition";
 import CompetitionsList from "./erasmusCompetition/CompetitionsList/CompetitionsList";
 import EditErasmusCompetition from "./erasmusCompetition/EditErasmusCompetition/EditErasmusCompetition"
-import PastCompetitions from './PastCompetitions/PastCompetetions';
+import PastCompetitions from "./erasmusCompetition/PastCompetitions/PastCompetitions"
 import CompetitionDetails from './CompetitionDetails/CompetitionDetails';
 import {Header} from "./components/header/Header";
 import {Footer} from "./components/footer/Footer";
