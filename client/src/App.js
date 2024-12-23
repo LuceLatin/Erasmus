@@ -1,9 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Navbar, Nav, Container } from 'react-bootstrap';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'; // Import React Router components
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 
-// Import your components
-import UserList from './Users/UserList'; // Adjust the path if necessary
+import UserList from './Users/UserList';
 import Homepage from './Homepage';
 import AddUser from './Users/AddUser';
 import AddErasmusCompetition from "./erasmusCompetition/AddErasmusCompetition/AddErasmusCompetition";
@@ -16,7 +15,8 @@ import {Footer} from "./components/footer/Footer";
 import Login from './Authentication/login';
 import {UserProfile} from "./userProfile/userProfile";
 import {useGetCurrentUser} from "./hooks/useGetCurrentUser";
-import {AuthenticatedRoute} from "./authenticatedRoute/authenticatedRoute";
+import {AuthenticatedRoute} from "./components/authenticatedRoute/authenticatedRoute";
+import {ErasmusCompetitionApplication} from "./erasmusCompetitionApplication/erasmusCompetitionApplication";
 
 function App() {
     const { user, loading } = useGetCurrentUser();
@@ -39,6 +39,7 @@ function App() {
                 <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
                 <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
                 <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
+                <Route path="/erasmus-competitions/:id/apply" element={<ErasmusCompetitionApplication />} />
                 <Route path="/me" element={ <UserProfile user={user}/> } />
             </Route>
 

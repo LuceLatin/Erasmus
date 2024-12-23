@@ -38,7 +38,6 @@ function UserList() {
     <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <th>ID</th>
             <th>Ime</th>
             <th>Prezime</th>
             <th>Korisničko ime</th>
@@ -48,7 +47,6 @@ function UserList() {
         <tbody>
           {users.map((user) => (
             <tr key={user._id}>
-              <td>{user._id}</td>
               <td>{user.firstName}</td>
               <td>{user.lastName}</td>
               <td>{user.username}</td>

@@ -1,6 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
+export const formatDate = (date) => {
+  const d = new Date(date);
+  const year = d.getFullYear();
+  const month = (d.getMonth() + 1).toString().padStart(2, '0');
+  const day = d.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
 
 function EditErasmusCompetition() {
   const [competitionData, setCompetitionData] = useState({
@@ -14,14 +21,6 @@ function EditErasmusCompetition() {
 
   const { id } = useParams();  
   const navigate = useNavigate();
-
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const year = d.getFullYear();
-    const month = (d.getMonth() + 1).toString().padStart(2, '0');
-    const day = d.getDate().toString().padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
 
   useEffect(() => {
     fetch(`/api/competitions/${id}`)
