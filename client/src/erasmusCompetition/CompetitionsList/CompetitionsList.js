@@ -1,66 +1,58 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Table } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';  // Importiraj jwt-decode
+import { useGetCurrentUser } from "../../hooks/useGetCurrentUser";
+import { useFetcher } from "../../hooks/useFetcher";
+import ConfirmationModal from '../../components/Modal/modal';
 
 const CompetitionsList = () => {
     const [competitions, setCompetitions] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [competitionToDelete, setCompetitionToDelete] = useState(null);
     const [error, setError] = useState(null);
-    const [userRole, setUserRole] = useState(null);
+    const { user } = useGetCurrentUser();
     const navigate = useNavigate();
+    const { loading, response } = useFetcher({ endpoint: '/api/competitions' });
+    const isCoordinator = user?.role === 'koordinator';
 
     useEffect(() => {
-        const token = document.cookie.split('access-token=')[1]?.split(';')[0];
-        if (token) {
-            try {
-                const decodedToken = jwtDecode(token);
-                setUserRole(decodedToken.role); 
-            } catch (err) {
-                setError('Invalid token');
-            }
-        } else {
-            setError('No token found');
+        if (response) {
+            setCompetitions(response);
         }
-    }, []);
+    }, [response]);
 
-    useEffect(() => {
-        fetch('/api/competitions')
-            .then((response) => response.json())
-            .then((data) => setCompetitions(data))
-            .catch((err) => console.error('Error fetching competitions:', err));
-    }, []);
+    if (loading) {
+        return null;
+    }
 
     const handleEdit = (id) => {
         navigate(`/competitions/edit/${id}`);
     };
 
     const handleDelete = (id) => {
-        setCompetitionToDelete(id); 
-        setShowDeleteModal(true);  
+        setCompetitionToDelete(id);
+        setShowDeleteModal(true);
     };
 
     const confirmDelete = () => {
         fetch(`/api/competitions/${competitionToDelete}`, {
             method: 'DELETE',
         })
-        .then((response) => response.json())
-        .then((data) => {
-            if (data.message) {
-                setCompetitions(prevCompetitions => 
-                    prevCompetitions.filter(competition => competition._id !== competitionToDelete)
-                );
-                setShowDeleteModal(false); 
-            }
-            else {
-                setError("Brisanje nije uspjelo.");
-            }
-        })
-        .catch((error) => {
-            console.error('Error deleting competition:', error);
-            setError("An error occurred while deleting the competition.");
-        });
+            .then((response) => response.json())
+            .then((data) => {
+                if (data.message) {
+                    setCompetitions(prevCompetitions =>
+                        prevCompetitions.filter(competition => competition._id !== competitionToDelete)
+                    );
+                    setShowDeleteModal(false);
+                } else {
+                    setError("Brisanje nije uspjelo.");
+                }
+            })
+            .catch((error) => {
+                console.error('Error deleting competition:', error);
+                setError("An error occurred while deleting the competition.");
+            });
     };
 
     const handleCloseModal = () => {
@@ -68,46 +60,68 @@ const CompetitionsList = () => {
         setError(null);
     };
 
+    const handleAddErasmusCompetition = () => {
+        navigate('/erasmus-competitions/add');
+    };
+
     const competitionNameToDelete = competitions.find(competition => competition._id === competitionToDelete)?.title;
 
     return (
         <div>
             <h1 className="left-aligned heading">Svi natječaji</h1>
-            {competitions.map((competition) => (
-                <div key={competition._id} className="competition-item d-flex gap-3 mb-4">
-                    <p className="mb-0">{competition.title}</p>
-                    {userRole === 'koordinator' && (  
-                        <>
-                            <Button variant="success" onClick={() => handleEdit(competition._id)}>
-                                Edit
-                            </Button>
-                            <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
-                                Delete
-                            </Button>
-                        </>
-                    )}
-                </div>
-            ))}
+            <div className="d-flex justify-content-start mb-3">
+                <Button variant="primary" onClick={handleAddErasmusCompetition}>
+                    Dodaj natječaj
+                </Button>
+            </div>
+            <Table striped bordered hover responsive>
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Natječaj</th>
+                    <th>Vrsta korisnika</th>
+                    <th>Vrsta institucije</th>
+                    <th>Datum pocetka</th>
+                    <th>Datum zavrsetka</th>
+                    <th>Akcije</th>
+                </tr>
+                </thead>
+                <tbody>
+                {competitions.map((competition) => (
+                    <tr key={competition._id}>
+                        <td>{competition._id}</td>
+                        <td>{competition.title}</td>
+                        <td>{competition.role}</td>
+                        <td>{competition.institutionType}</td>
+                        <td>{new Date(competition.startDate).toLocaleDateString()}</td>
+                        <td>{new Date(competition.endDate).toLocaleDateString()}</td>
+                        <td>
+                            {isCoordinator && (
+                                <>
+                                    <Button variant="success" onClick={() => handleEdit(competition._id)}>
+                                        Edit
+                                    </Button>
+                                    <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
+                                        Delete
+                                    </Button>
+                                </>
+                            )}
+                        </td>
+                    </tr>
+                ))}
+                </tbody>
+            </Table>
 
-            {/* Modal */}
-            <Modal show={showDeleteModal} onHide={handleCloseModal} className="mt-5">
-                <Modal.Header closeButton>
-                    <Modal.Title>Potvrda brisanja</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                    Jeste li sigurni da želite obrisati natječaj: 
-                    <strong> {competitionNameToDelete} </strong>?
-                    {error && <div className="text-danger mt-3">{error}</div>}
-                </Modal.Body>
-                <Modal.Footer>
-                    <Button variant="secondary" onClick={handleCloseModal}>
-                        Close
-                    </Button>
-                    <Button variant="danger" onClick={confirmDelete}>
-                        Delete
-                    </Button>
-                </Modal.Footer>
-            </Modal>
+            <ConfirmationModal
+                show={showDeleteModal}
+                handleClose={handleCloseModal}
+                handleConfirm={confirmDelete}
+                title="Potvrda brisanja"
+                body={`Jeste li sigurni da želite obrisati natječaj: ${competitionNameToDelete}?`}
+                confirmLabel="Delete"
+                closeLabel="Close"
+                error={error}
+            />
         </div>
     );
 };

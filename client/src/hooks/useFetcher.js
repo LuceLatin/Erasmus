@@ -6,10 +6,12 @@ export function useFetcher({ endpoint, method = "GET", data = null }) {
     const accessToken = cookies["access-token"];
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                setLoading(true);
                 const options = {
                     method,
                     headers: {
@@ -21,17 +23,20 @@ export function useFetcher({ endpoint, method = "GET", data = null }) {
 
                 const res = await fetch(endpoint, options);
                 if (!res.ok) {
+                    setLoading(false);
                     throw new Error(`Error fetching data: ${res.statusText}`);
                 }
                 const result = await res.json();
                 setResponse(result);
+                setLoading(false);
             } catch (err) {
                 setError(err);
+                setLoading(false);
             }
         };
 
         fetchData();
     }, [endpoint, method, data, accessToken]);
 
-    return { response, error };
+    return { response, error, loading };
 }
