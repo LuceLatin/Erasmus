@@ -35,7 +35,7 @@ function AddErasmusCompetition() {
       .then((response) => response.json())
       .then((data) => {
         // Redirect to competition list page on success
-        navigate('/competitions');
+        navigate('/erasmus-competitions/');
       })
       .catch((error) => {
         console.error('Error adding competition:', error);

@@ -60,7 +60,7 @@ function EditErasmusCompetition() {
     })
       .then((response) => response.json())
       .then((data) => {
-        navigate('/erasmus-competitions/list');
+        navigate('/erasmus-competitions/');
       })
       .catch((error) => {
         console.error('Error updating competition:', error);
