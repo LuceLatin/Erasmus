@@ -6,6 +6,7 @@ export function useGetCurrentUser() {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const { error, response, loading: loadingFetcher } = useFetcher({ endpoint: "/me" });
+    const isCoordinator = user?.role === "koordinator";
 
     console.log('useFetcher res:', response);
     useEffect(() => {
@@ -21,5 +22,5 @@ export function useGetCurrentUser() {
 
     }, [response, user, error, loadingFetcher]);
 
-    return { user, loading };
+    return { user, loading, isCoordinator };
 }

@@ -10,10 +10,9 @@ const CompetitionsList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [competitionToDelete, setCompetitionToDelete] = useState(null);
     const [error, setError] = useState(null);
-    const { user } = useGetCurrentUser();
+    const { isCoordinator } = useGetCurrentUser();
     const navigate = useNavigate();
     const { loading, response } = useFetcher({ endpoint: '/api/competitions' });
-    const isCoordinator = user?.role === 'koordinator';
 
     useEffect(() => {
         if (response) {

@@ -9,8 +9,8 @@ export function Header() {
     const { user } = useGetCurrentUser();
 
     const handleLogout = async () => {
-        removeCookie("access-token");
-            navigate("/");
+        await removeCookie("access-token");
+        navigate("/");
     };
 
     return (
