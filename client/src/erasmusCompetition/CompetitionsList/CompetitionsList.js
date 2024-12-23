@@ -1,13 +1,29 @@
 import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';  // Importiraj jwt-decode
 
 const CompetitionsList = () => {
     const [competitions, setCompetitions] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [competitionToDelete, setCompetitionToDelete] = useState(null);
     const [error, setError] = useState(null);
+    const [userRole, setUserRole] = useState(null);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const token = document.cookie.split('access-token=')[1]?.split(';')[0];
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token);
+                setUserRole(decodedToken.role); 
+            } catch (err) {
+                setError('Invalid token');
+            }
+        } else {
+            setError('No token found');
+        }
+    }, []);
 
     useEffect(() => {
         fetch('/api/competitions')
@@ -36,7 +52,8 @@ const CompetitionsList = () => {
                     prevCompetitions.filter(competition => competition._id !== competitionToDelete)
                 );
                 setShowDeleteModal(false); 
-            } else {
+            }
+            else {
                 setError("Brisanje nije uspjelo.");
             }
         })
@@ -59,12 +76,16 @@ const CompetitionsList = () => {
             {competitions.map((competition) => (
                 <div key={competition._id} className="competition-item d-flex gap-3 mb-4">
                     <p className="mb-0">{competition.title}</p>
-                    <Button variant="success" onClick={() => handleEdit(competition._id)}> 
-                        Edit 
-                    </Button>
-                    <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
-                        Delete
-                    </Button>
+                    {userRole === 'koordinator' && (  
+                        <>
+                            <Button variant="success" onClick={() => handleEdit(competition._id)}>
+                                Edit
+                            </Button>
+                            <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
+                                Delete
+                            </Button>
+                        </>
+                    )}
                 </div>
             ))}
 

@@ -1,6 +1,6 @@
 import express from "express";
 import { ErasmusCompetition } from "../models/ErasmusCompetition/ErasmusCompetition.js";
-import { createTokens, validateToken, checkAuthorization } from "../jwt.js";
+import { createTokens, validateToken, checkAuthorization, checkAuthorization2 } from "../jwt.js";
 
 
 const erasmusCompetitionRouter = express.Router();
@@ -18,18 +18,20 @@ erasmusCompetitionRouter.post("/api/competitions", checkAuthorization, async (re
 });
 
 // Get all competitions
-erasmusCompetitionRouter.get("/api/competitions", checkAuthorization, async (req, res) => {
-    try {
-        const competitions = await ErasmusCompetition.find();
-        res.status(200).json(competitions);
-    } catch (error) {
-        console.error("Error fetching competitions:", error);
-        res.status(500).json({ error: "Failed to fetch competitions" });
+erasmusCompetitionRouter.get("/api/competitions", validateToken, checkAuthorization2(['koordinator', 'student', 'profesor']), 
+    async (req, res) => {
+        try {
+            const competitions = await ErasmusCompetition.find();
+            res.json(competitions);
+        } catch (error) {
+            res.status(500).json({ error: 'Failed to fetch competitions.' });
+        }
     }
-});
+);
+
 
 // Get a single competition by ID
-erasmusCompetitionRouter.get("/api/competitions/:id", checkAuthorization, async (req, res) => {
+erasmusCompetitionRouter.get("/api/competitions/:id", validateToken, checkAuthorization2(['koordinator', 'student', 'profesor']), async (req, res) => {
     try {
         const competition = await ErasmusCompetition.findById(req.params.id);
         if (!competition) {
