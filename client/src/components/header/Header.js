@@ -1,29 +1,16 @@
 import { Container, Nav, Navbar, NavDropdown } from "react-bootstrap";
 import { useCookies } from "react-cookie";
 import { useNavigate } from 'react-router-dom';
+import {useGetCurrentUser} from "../../hooks/useGetCurrentUser";
 
 export function Header() {
-    const [cookies] = useCookies(["access-token"]);
     const navigate = useNavigate();
-    
+    const [cookies, setCookie, removeCookie] = useCookies(["access-token"]);
+    const { user } = useGetCurrentUser();
+
     const handleLogout = async () => {
-        try {
-            const response = await fetch("/logout", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error("Logout failed");
-            }
-
+        removeCookie("access-token");
             navigate("/");
-
-        } catch (error) {
-            console.error("Error during logout:", error);
-        }
     };
 
     return (
@@ -35,24 +22,31 @@ export function Header() {
                     <Nav className="me-auto">
                         <Nav.Link href="/">Home</Nav.Link>
                         
-                        {cookies["access-token"] && (
+                        {user && (
                             <>
-                                <Nav.Link href="/users">Korisnici</Nav.Link>
-                                <Nav.Link href="/erasmus-competitions/add">Dodaj natječaj</Nav.Link>
-                                
+                                <NavDropdown title="Korisnici" id="basic-nav-dropdown">
+                                    <NavDropdown.Item href="/users">Svi korisnici</NavDropdown.Item>
+
+                                    <NavDropdown.Item href="/users/add">Dodaj korisnika</NavDropdown.Item>
+                                </NavDropdown>
                                 <NavDropdown title="Natječaji" id="basic-nav-dropdown">
-                                    <NavDropdown.Item href="/erasmus-competitions/list">Svi natječaji</NavDropdown.Item>
-                                    
+                                    <NavDropdown.Item href="/erasmus-competitions/">Svi natječaji</NavDropdown.Item>
+                                    <NavDropdown.Item href="/erasmus-competitions/add">Dodaj natječaj</NavDropdown.Item>
                                     <NavDropdown.Item href="/erasmus-competitions/past">Prošli natječaji</NavDropdown.Item>
                                 </NavDropdown>
                             </>
                         )}
                     </Nav>
                     <Nav className="ms-auto">
-                        {cookies["access-token"] ? (
-                            <Nav.Link onClick={handleLogout} style={{ cursor: "pointer" }}>
-                                Odjavi se
-                            </Nav.Link>
+                        {user ? (
+                                <NavDropdown title={`${user.firstName} ${user.lastName}`} id="basic-nav-dropdown">
+                                    <NavDropdown.Item href="/me" style={{ cursor: "pointer" }}>
+                                        Moj profil
+                                    </NavDropdown.Item>
+                                    <NavDropdown.Item onClick={handleLogout} style={{ cursor: "pointer" }}>
+                                        Odjavi se
+                                    </NavDropdown.Item>
+                                </NavDropdown>
                         ) : (
                             <Nav.Link href="/login">Prijavi se</Nav.Link>
                         )}

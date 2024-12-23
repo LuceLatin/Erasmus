@@ -14,8 +14,16 @@ import CompetitionDetails from './CompetitionDetails/CompetitionDetails';
 import {Header} from "./components/header/Header";
 import {Footer} from "./components/footer/Footer";
 import Login from './Authentication/login';
+import {UserProfile} from "./userProfile/userProfile";
+import {useGetCurrentUser} from "./hooks/useGetCurrentUser";
+import {AuthenticatedRoute} from "./authenticatedRoute/authenticatedRoute";
 
 function App() {
+    const { user, loading } = useGetCurrentUser();
+
+    if (loading) {
+        return <div>Loading...</div>;
+    }
   return (
       <div className="App d-flex flex-column site-container">
         <Header />
@@ -23,13 +31,17 @@ function App() {
           <Container>
             <Routes>
             <Route path="/" element={<Homepage />} />
-            <Route path="/users" element={<UserList />} />
-            <Route path="/users/add" element={<AddUser />} />
-            <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
-            <Route path="erasmus-competitions/list" element={<CompetitionsList/>} />
-            <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
-            <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
-            <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
+            <Route element={<AuthenticatedRoute user={user} />}>
+                <Route path="/users" element={<UserList />} />
+                <Route path="/users/add" element={<AddUser />} />
+                <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
+                <Route path="erasmus-competitions/" element={<CompetitionsList/>} />
+                <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
+                <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
+                <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
+                <Route path="/me" element={ <UserProfile user={user}/> } />
+            </Route>
+
             <Route path="/login" element={<Login />} />
             <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
             </Routes>

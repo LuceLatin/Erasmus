@@ -36,12 +36,18 @@ authenticationRouter.post("/login", async (req, res) => {
 });
 
 authenticationRouter.post("/logout", (req, res) => {
-    console.log("abc")
-    
     res.clearCookie("access-token");
 
 
     res.status(200).json({ message: "Logged out successfully." });
+});
+
+authenticationRouter.get("/me", validateToken, (req, res) => {
+    User.findById(req.userId).select('-password').then((user) => {
+        res.json(user);
+    }).catch((err) => {
+        res.status(500).json({ message: "Error fetching user data", error: err });
+    });
 });
 
 
