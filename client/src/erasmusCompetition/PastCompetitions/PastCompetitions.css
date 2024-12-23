@@ -1,0 +1,26 @@
+
+.past-competitions-heading {
+    font-size: 2rem;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+    position: relative;
+    top: 30px;
+}
+
+.past-competition-item:hover {
+    background-color: #eef2f7;
+}
+
+.past-competition-title {
+    color: #2C3E50;
+    font-size: 18px;
+    margin-bottom: 15px;
+    padding: 10px;
+    border-radius: 8px;
+    display: inline-block;
+    text-align: center; 
+    width: 100%;
+}
+
+

@@ -9,6 +9,8 @@ import AddUser from './Users/AddUser';
 import AddErasmusCompetition from "./erasmusCompetition/AddErasmusCompetition/AddErasmusCompetition";
 import CompetitionsList from "./erasmusCompetition/CompetitionsList/CompetitionsList";
 import EditErasmusCompetition from "./erasmusCompetition/EditErasmusCompetition/EditErasmusCompetition"
+import PastCompetitions from './PastCompetitions/PastCompetetions';
+import CompetitionDetails from './CompetitionDetails/CompetitionDetails';
 import {Header} from "./components/header/Header";
 import {Footer} from "./components/footer/Footer";
 import Login from './Authentication/login';
@@ -26,6 +28,8 @@ function App() {
             <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
             <Route path="erasmus-competitions/list" element={<CompetitionsList/>} />
             <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
+            <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
+            <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
             <Route path="/login" element={<Login />} />
             <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
             </Routes>

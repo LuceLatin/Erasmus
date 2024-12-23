@@ -59,4 +59,36 @@ const checkAuthorization = (req, res, next) => {
     }
 };
 
-export { createTokens, validateToken, checkAuthorization };
+
+//for access to all roles
+const checkAuthorization2 = (allowedRoles) => (req, res, next) => {
+    const accessToken = req.cookies["access-token"];
+
+    if (!accessToken) {
+        return res.status(401).json({ error: "Access token not found." });
+    }
+
+    try {
+        const decodedToken = jwt.verify(accessToken, "jwtsecret");
+        const userRole = decodedToken.role;
+
+        //console.log("Decoded Token:", decodedToken);  
+        //console.log("User Role:", userRole);
+
+        if (allowedRoles.includes(userRole)) {
+            req.userId = decodedToken.id;
+            req.userRole = userRole;
+            return next();
+        }
+        else {
+            return res.status(403).json({ error: "User is not authorized." });
+        }
+    }
+    catch (err) {
+        return res.status(498).json({ error: "Invalid access token." });
+    }
+};
+
+
+
+export { createTokens, validateToken, checkAuthorization, checkAuthorization2 };
