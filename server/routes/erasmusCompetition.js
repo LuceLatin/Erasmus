@@ -5,7 +5,6 @@ import { createTokens, validateToken, checkAuthorization, checkAuthorization2 } 
 
 const erasmusCompetitionRouter = express.Router();
 
-// Create a new competition
 erasmusCompetitionRouter.post("/api/competitions", checkAuthorization, async (req, res) => {
     try {
         const newCompetition = new ErasmusCompetition(req.body);
@@ -17,8 +16,7 @@ erasmusCompetitionRouter.post("/api/competitions", checkAuthorization, async (re
     }
 });
 
-// Get all competitions
-erasmusCompetitionRouter.get("/api/competitions", validateToken, checkAuthorization2(['koordinator', 'student', 'profesor']), 
+erasmusCompetitionRouter.get("/api/competitions", validateToken, checkAuthorization2(['koordinator', 'student', 'profesor']),
     async (req, res) => {
         try {
             const competitions = await ErasmusCompetition.find();
@@ -30,7 +28,6 @@ erasmusCompetitionRouter.get("/api/competitions", validateToken, checkAuthorizat
 );
 
 
-// Get a single competition by ID
 erasmusCompetitionRouter.get("/api/competitions/:id", validateToken, checkAuthorization2(['koordinator', 'student', 'profesor']), async (req, res) => {
     try {
         const competition = await ErasmusCompetition.findById(req.params.id);
@@ -44,7 +41,6 @@ erasmusCompetitionRouter.get("/api/competitions/:id", validateToken, checkAuthor
     }
 });
 
-// Update a competition by ID
 erasmusCompetitionRouter.put("/api/competitions/:id", checkAuthorization, async (req, res) => {
     try {
         const updatedCompetition = await ErasmusCompetition.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
@@ -58,7 +54,6 @@ erasmusCompetitionRouter.put("/api/competitions/:id", checkAuthorization, async 
     }
 });
 
-// Delete a competition by ID
 erasmusCompetitionRouter.delete("/api/competitions/:id", checkAuthorization, async (req, res) => {
     try {
         const deletedCompetition = await ErasmusCompetition.findByIdAndDelete(req.params.id);

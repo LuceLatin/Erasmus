@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { UserWidget } from "../components/userWidget/userWidget";
 import {GeneralInfo} from "./generalInfo/GeneralInfo";
 import FileUploads from "./fileUploads/FileUploads";
+import {BranchChooser} from "./branchChooser/BranchChooser";
 
 function mapRole(role){
     if (role.includes("prof")) {
@@ -20,7 +21,16 @@ export function ErasmusCompetitionApplication() {
     const { user, loading } = useGetCurrentUser();
     const { response: competitionData } = useFetcher({ endpoint: `/api/competitions/${id}` });
     const [error, setError] = useState(null);
-    const [currentStep, setCurrentStep] = useState(1);
+    const [currentStep, setCurrentStep] = useState(3);
+    const [userChoice, setUserChoice] = useState({ firstBranch: null, secondBranch: null, thirdBranch: null });
+    const [files, setFiles] = useState({
+        schoolGrades: null,
+        cv: null,
+        motivationalLetter: null,
+    });
+    useEffect(() => {
+        console.log('userChoice:', userChoice);
+    }, [userChoice]);
 
     useEffect(() => {
         if (user && competitionData) {
@@ -39,13 +49,29 @@ export function ErasmusCompetitionApplication() {
             case 1:
                 return <GeneralInfo user={user} onSubmit={()=> setCurrentStep(2)}/>;
             case 2:
-                return <FileUploads onSubmit={()=> setCurrentStep(3)} />;
+                return <FileUploads
+                    onSubmit={()=> setCurrentStep(3)}
+                    files={files}
+                    onFileUpload={setFiles}
+                />;
             case 3:
-                return <div>Step 3</div>;
+                return <BranchChooser onSubmit={()=> setCurrentStep(4)}
+                                      choice={userChoice.firstBranch}
+                                      onUserChoice={(id)=> setUserChoice({...userChoice, firstBranch: id})}
+                                      title="Prvi izbor"
+                />;
             case 4:
-                return <div>Step 4</div>;
+                return <BranchChooser onSubmit={()=> setCurrentStep(5)}
+                                      choice={userChoice.secondBranch}
+                                      onUserChoice={(id)=> setUserChoice({...userChoice, secondBranch: id})}
+                                      title="Drugi izbor"
+                />;
             case 5:
-                return <div>Step 5</div>;
+                return <BranchChooser onSubmit={()=> setCurrentStep(6)}
+                                      choice={userChoice.thirdBranch}
+                                      onUserChoice={(id)=> setUserChoice({...userChoice, thirdBranch: id})}
+                                      title="Treci izbor"
+                />;
             default:
                 return <div>Unknown step</div>;
         }
