@@ -35,6 +35,8 @@ userRouter.post("/api/users/add", async (req, res) => {
         const newUser = new User(req.body);
         newUser.password = bcrypt.hashSync(newUser.password, 10);
 
+        newUser.branch = newUser._id;
+
         await newUser.save();
 
         res.status(201).json({ message: "User successfully created", user: newUser });
