@@ -11,6 +11,7 @@ import authenticationRouter from "./routes/authenticationRoutes.js"
 import branchRoutes from "./routes/branchRoutes.js";
 import categoryRouter from "./routes/categoryRoutes.js";
 import institutionRoutes from "./routes/institutionRoutes.js";
+import {erasmusApplicationRouter} from "./routes/erasmusApplicationeRoutes.js";
 dotenv.config();
 
 // Middleware
@@ -27,6 +28,7 @@ app.use(branchRoutes)
 app.use(categoryRouter)
 app.use(institutionRoutes)
 app.use(authenticationRouter);
+app.use(erasmusApplicationRouter)
 
 const mongoConnection = connectDB();
 console.log(mongoConnection);

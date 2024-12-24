@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 
 const FileUploads = ({ onSubmit, userRole, files, onFileUpload }) => {
-
     const handleFileChange = (e, fileType) => {
         if (e.target.files && e.target.files.length > 0) {
             onFileUpload((prevFiles) => ({
@@ -11,12 +10,7 @@ const FileUploads = ({ onSubmit, userRole, files, onFileUpload }) => {
             }));
         }
     };
-
     const allFilesUploaded = Object.values(files).filter(file => file !== null).length >= 2
-    const handleUpload = async () => {
-        // Placeholder for upload logic
-        console.log("Files to upload:", files);
-    };
 
     return (
         <Container className="my-3 d-flex justify-content-center align-items-center flex-column">
@@ -74,7 +68,6 @@ const FileUploads = ({ onSubmit, userRole, files, onFileUpload }) => {
                     type="button"
                     disabled={!allFilesUploaded}
                     onClick={() => {
-                        handleUpload();
                         onSubmit();
                     }}
                 >
