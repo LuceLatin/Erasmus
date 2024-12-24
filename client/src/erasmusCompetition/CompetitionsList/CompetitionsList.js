@@ -10,15 +10,30 @@ const CompetitionsList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [competitionToDelete, setCompetitionToDelete] = useState(null);
     const [error, setError] = useState(null);
-    const { isCoordinator } = useGetCurrentUser();
+
+    const { isCoordinator, isProfesor, isStudent } = useGetCurrentUser();
     const navigate = useNavigate();
     const { loading, response } = useFetcher({ endpoint: '/api/competitions' });
 
     useEffect(() => {
         if (response) {
-            setCompetitions(response);
+            // Filter natječaje na temelju uloge korisnika
+            const filteredCompetitions = response.filter((competition) => {
+                if (isProfesor) {
+                    return competition.role === 'profesor';
+                }
+                if (isCoordinator) {
+                    return true; // Koordinator vidi sve
+                }
+                if (isStudent) {
+                    return competition.role === 'student';
+                }
+                return false;
+            });
+
+            setCompetitions(filteredCompetitions);
         }
-    }, [response]);
+    }, [response, isProfesor, isCoordinator, isStudent]);
 
     if (loading) {
         return null;
@@ -59,55 +74,51 @@ const CompetitionsList = () => {
         setError(null);
     };
 
-    const handleAddErasmusCompetition = () => {
-        navigate('/erasmus-competitions/add');
-    };
-
     const competitionNameToDelete = competitions.find(competition => competition._id === competitionToDelete)?.title;
 
     return (
         <div>
-            <h1 className="left-aligned heading">Svi natječaji</h1>
-            <div className="d-flex justify-content-start mb-3">
-                <Button variant="primary" onClick={handleAddErasmusCompetition}>
-                    Dodaj natječaj
-                </Button>
-            </div>
-            <Table striped bordered hover responsive>
-                <thead>
-                <tr>
-                    <th>Natječaj</th>
-                    <th>Vrsta korisnika</th>
-                    <th>Vrsta institucije</th>
-                    <th>Datum pocetka</th>
-                    <th>Datum zavrsetka</th>
-                    <th>Akcije</th>
-                </tr>
-                </thead>
-                <tbody>
-                {competitions.map((competition) => (
-                    <tr key={competition._id}>
-                        <td>{competition.title}</td>
-                        <td>{competition.role}</td>
-                        <td>{competition.institutionType}</td>
-                        <td>{new Date(competition.startDate).toLocaleDateString()}</td>
-                        <td>{new Date(competition.endDate).toLocaleDateString()}</td>
-                        <td>
-                            {isCoordinator && (
-                                <>
-                                    <Button variant="success" onClick={() => handleEdit(competition._id)}>
-                                        Edit
-                                    </Button>
-                                    <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
-                                        Delete
-                                    </Button>
-                                </>
-                            )}
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </Table>
+            <h1 className="left-aligned heading">Dostupni natječaji</h1>
+
+            {competitions.length > 0 ? (
+                <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th>Natječaj</th>
+                            <th>Vrsta korisnika</th>
+                            <th>Vrsta institucije</th>
+                            <th>Datum pocetka</th>
+                            <th>Datum zavrsetka</th>
+                            <th>Akcije</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {competitions.map((competition) => (
+                            <tr key={competition._id}>
+                                <td>{competition.title}</td>
+                                <td>{competition.role}</td>
+                                <td>{competition.institutionType}</td>
+                                <td>{new Date(competition.startDate).toLocaleDateString()}</td>
+                                <td>{new Date(competition.endDate).toLocaleDateString()}</td>
+                                <td>
+                                    {isCoordinator && (
+                                        <>
+                                            <Button variant="success" onClick={() => handleEdit(competition._id)}>
+                                                Edit
+                                            </Button>
+                                            <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
+                                                Delete
+                                            </Button>
+                                        </>
+                                    )}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+            ) : (
+                <p>Nema dostupnih natječaja.</p>
+            )}
 
             <ConfirmationModal
                 show={showDeleteModal}

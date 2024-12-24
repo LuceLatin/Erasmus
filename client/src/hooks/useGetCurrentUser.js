@@ -7,6 +7,8 @@ export function useGetCurrentUser() {
     const [loading, setLoading] = useState(true);
     const { error, response, loading: loadingFetcher } = useFetcher({ endpoint: "/me" });
     const isCoordinator = user?.role === "koordinator";
+    const isStudent = user?.role === "student";
+    const isProfesor = user?.role === "profesor";
 
     useEffect(() => {
         if (response) {
@@ -21,5 +23,5 @@ export function useGetCurrentUser() {
 
     }, [response, user, error, loadingFetcher]);
 
-    return { user, loading, isCoordinator };
+    return { user, loading, isCoordinator, isProfesor, isStudent };
 }
