@@ -45,7 +45,8 @@ function UserList() {
           </tr>
         </thead>
         <tbody>
-          {users.map((user) => (
+
+          {users.length > 0 && users?.map((user) => (
             <tr key={user._id}>
               <td>{user.firstName}</td>
               <td>{user.lastName}</td>

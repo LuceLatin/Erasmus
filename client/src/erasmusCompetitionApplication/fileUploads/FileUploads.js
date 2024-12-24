@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import { Button, Container, Form } from "react-bootstrap";
 
-const FileUploads = ({ onSubmit, userRole }) => {
-    const [files, setFiles] = useState({
-        schoolGrades: null,
-        cv: null,
-        motivationalLetter: null,
-    });
+const FileUploads = ({ onSubmit, userRole, files, onFileUpload }) => {
 
     const handleFileChange = (e, fileType) => {
         if (e.target.files && e.target.files.length > 0) {
-            setFiles((prevFiles) => ({
+            onFileUpload((prevFiles) => ({
                 ...prevFiles,
                 [fileType]: e.target.files[0],
             }));
