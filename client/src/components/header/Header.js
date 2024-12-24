@@ -30,7 +30,7 @@ export function Header() {
                                     <NavDropdown.Item href="/users/add">Dodaj korisnika</NavDropdown.Item>
                                 </NavDropdown>
                                 <NavDropdown title="Natječaji" id="basic-nav-dropdown">
-                                    <NavDropdown.Item href="/erasmus-competitions/">Svi natječaji</NavDropdown.Item>
+                                    <NavDropdown.Item href="/erasmus-competitions/">Dostupni natječaji</NavDropdown.Item>
                                     <NavDropdown.Item href="/erasmus-competitions/add">Dodaj natječaj</NavDropdown.Item>
                                     <NavDropdown.Item href="/erasmus-competitions/past">Prošli natječaji</NavDropdown.Item>
                                 </NavDropdown>
