@@ -21,7 +21,7 @@ const groupBranchesByInstitution = (branches) => {
     }, {});
 };
 
-branchRoutes.post("/api/branches", checkAuthorization, async (req, res) => {
+branchRoutes.post("/api/branches/add", checkAuthorization, async (req, res) => {
     try {
         const newBranch = new Branch(req.body);
         await newBranch.save();
@@ -91,7 +91,7 @@ branchRoutes.get("/api/branches/:id", validateToken, checkAuthorization2(['koord
     }
 });
 
-branchRoutes.put("/api/branches/:id", checkAuthorization, async (req, res) => {
+branchRoutes.put("/api/branches/edit/:id", checkAuthorization, async (req, res) => {
     try {
         const updatedBranch = await Branch.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!updatedBranch) {

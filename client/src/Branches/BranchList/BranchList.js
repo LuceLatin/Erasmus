@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom'; 
-import ConfirmationModal from '../components/Modal/modal'; // Pretpostavljam da koristiš ovu komponentu
+import ConfirmationModal from '../../components/Modal/modal'; // Pretpostavljam da koristiš ovu komponentu
 
 function UserList() {
   const [users, setUsers] = useState([]);

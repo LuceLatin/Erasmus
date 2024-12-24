@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-function AddUser() {
+function EditUser() {
   const [userData, setUserData] = useState({
     firstName: '',
     lastName: '',
@@ -18,27 +18,42 @@ function AddUser() {
     branch: '', // This will hold the selected branch
   });
 
-  const [branches, setBranches] = useState([]); // State to store branches
+  const [branches, setBranches] = useState([]);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const { id } = useParams(); // Extract ID from the URL parameters
+  console.log("ID ",id)
 
-  // Fetch branches on component mount
+  // Fetch user data and branches
   useEffect(() => {
-    const fetchBranches = async () => {
+    const fetchData = async () => {
       try {
-        const response = await fetch('/api/branches'); // Endpoint for fetching branches
-        const data = await response.json();
-        if (data.error) {
-          setError(data.error);
+        // Fetch user details
+        const userResponse = await fetch(`/api/users/${id}`);
+        const user = await userResponse.json();
+        if (user.error) {
+          setError(user.error);
         } else {
-          setBranches(data); // Set branches to state
+          setUserData(user);
         }
+
+        // Fetch branches
+        const branchResponse = await fetch('/api/branches');
+        const branchData = await branchResponse.json();
+        if (branchData.error) {
+          setError(branchData.error);
+        } else {
+          setBranches(branchData);
+        }
+        setLoading(false);
       } catch (err) {
-        setError('Greška prilikom učitavanja grana');
+        setError('Greška prilikom učitavanja podataka');
+        setLoading(false);
       }
     };
-    fetchBranches();
-  }, []);
+    fetchData();
+  }, [id]);
 
   const handleChange = (e) => {
     setUserData({
@@ -50,9 +65,9 @@ function AddUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send data to your API endpoint to create the user
-    fetch('/api/users/add', {
-      method: 'POST',
+    // Send data to your API endpoint to update the user
+    fetch(`/api/users/${id}`, {
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -60,17 +75,26 @@ function AddUser() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Redirect to user list page on success
-        navigate('/users');
+        if (data.error) {
+          setError(data.error);
+        } else {
+          // Redirect to user list page on success
+          navigate('/users');
+        }
       })
       .catch((error) => {
-        console.error('Error adding user:', error);
+        console.error('Error updating user:', error);
+        setError('Greška prilikom ažuriranja korisnika');
       });
   };
 
+  if (loading) {
+    return <Container className="my-5"><h1>Učitavanje...</h1></Container>;
+  }
+
   return (
     <Container className="my-5">
-      <h1 className="mb-4">Dodaj korisnika</h1>
+      <h1 className="mb-4">Uredi korisnika</h1>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit} style={{ maxWidth: '600px' }}>
         <Form.Group controlId="firstName" className="mb-3">
@@ -171,7 +195,6 @@ function AddUser() {
             name="password"
             value={userData.password}
             onChange={handleChange}
-            required
           />
         </Form.Group>
         <Form.Group controlId="role" className="mb-3">
@@ -204,11 +227,11 @@ function AddUser() {
           </Form.Select>
         </Form.Group>
         <Button variant="primary" type="submit">
-          Dodaj korisnika
+          Spremi promjene
         </Button>
       </Form>
     </Container>
   );
 }
 
-export default AddUser;
+export default EditUser;

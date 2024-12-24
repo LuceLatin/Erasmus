@@ -34,6 +34,11 @@ export function Header() {
                                     <NavDropdown.Item href="/erasmus-competitions/add">Dodaj natječaj</NavDropdown.Item>
                                     <NavDropdown.Item href="/erasmus-competitions/past">Prošli natječaji</NavDropdown.Item>
                                 </NavDropdown>
+                                <NavDropdown title="Institucije" id="basic-nav-dropdown">
+                                    <NavDropdown.Item href="/institutions/">Sve institucije</NavDropdown.Item>
+                                    <NavDropdown.Item href="/institutions/add">Dodaj instituciju</NavDropdown.Item>
+                                    <NavDropdown.Item href="/categories/">Sve kategorije</NavDropdown.Item>
+                                </NavDropdown>
                             </>
                         )}
                     </Nav>
