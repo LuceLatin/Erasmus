@@ -44,5 +44,77 @@ userRouter.post("/api/users/add", async (req, res) => {
     }
 });
 
+// Delete user
+userRouter.delete("/api/users/:id", checkAuthorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedUser = await User.findByIdAndDelete(id);
+
+        if (!deletedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({ message: "User successfully deleted" });
+    } catch (error) {
+        console.error("Error deleting user:", error);
+        res.status(500).json({ error: "Failed to delete user" });
+    }
+});
+
+// Edit user
+userRouter.put("/api/users/:id", checkAuthorization, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { email, username, password, ...otherFields } = req.body;
+
+        // Check if email or username already exists in the database (excluding the current user)
+        const existingUser = await User.findOne({
+            $or: [{ email }, { username }],
+            _id: { $ne: id }, // Exclude current user
+        });
+
+        if (existingUser) {
+            return res.status(400).json({
+                error: "Email or Username already exists. Please choose a different one.",
+            });
+        }
+
+        const updateData = { ...otherFields };
+
+        if (email) updateData.email = email;
+        if (username) updateData.username = username;
+        if (password) updateData.password = bcrypt.hashSync(password, 10);
+
+        const updatedUser = await User.findByIdAndUpdate(id, updateData, { new: true });
+
+        if (!updatedUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        res.status(200).json({ message: "User successfully updated", user: updatedUser });
+    } catch (error) {
+        console.error("Error updating user:", error);
+        res.status(500).json({ error: "Failed to update user" });
+    }
+});
+
+userRouter.get('/api/users/:id', async (req, res) => {
+    const { id } = req.params;
+  
+    try {
+      // Find the user by ID
+      const user = await User.findById(id);
+  
+      if (!user) {
+        return res.status(404).json({ error: 'User not found' });
+      }
+  
+      res.json(user);
+    } catch (error) {
+      console.error('Error fetching user:', error);
+      res.status(500).json({ error: 'Server error' });
+    }
+  });
+
 
 export default userRouter;

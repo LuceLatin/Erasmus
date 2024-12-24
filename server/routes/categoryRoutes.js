@@ -4,7 +4,7 @@ import {Category} from "../models/Institution/Category.js";
 
 const categoryRouter = express.Router();
 
-categoryRouter.post("/api/categories", checkAuthorization, async (req, res) => {
+categoryRouter.post("/api/categories/add", checkAuthorization, async (req, res) => {
     try {
         const newCategory = new Category(req.body);
         await newCategory.save();
@@ -37,7 +37,7 @@ categoryRouter.get("/api/categories/:id", validateToken, checkAuthorization2(['k
     }
 });
 
-categoryRouter.put("/api/categories/:id", checkAuthorization, async (req, res) => {
+categoryRouter.put("/api/categories/edit/:id", checkAuthorization, async (req, res) => {
     try {
         const updatedCategory = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
         if (!updatedCategory) {

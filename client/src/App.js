@@ -17,6 +17,14 @@ import {UserProfile} from "./userProfile/userProfile";
 import {useGetCurrentUser} from "./hooks/useGetCurrentUser";
 import {AuthenticatedRoute} from "./components/authenticatedRoute/authenticatedRoute";
 import {ErasmusCompetitionApplication} from "./erasmusCompetitionApplication/erasmusCompetitionApplication";
+import InstitutionList from './Institutions/InstitutionList';
+import AddInstitution from './Institutions/AddInstitution';
+import EditInstitution from './Institutions/EditInstitution';
+import InstitutionDetails from './Institutions/InstitutionDetails/InstitutionDetails';
+import AddBranch from './Branches/AddBranch';
+import CategoryList from './Categories/CategoryList';
+import EditBranch from './Branches/EditBranch';
+import EditUser from './Users/EditUser';
 
 function App() {
     const { user, loading } = useGetCurrentUser();
@@ -34,6 +42,15 @@ function App() {
             <Route element={<AuthenticatedRoute user={user} />}>
                 <Route path="/users" element={<UserList />} />
                 <Route path="/users/add" element={<AddUser />} />
+                <Route path="/users/edit/:id" element={<EditUser />} />
+                <Route path="/categories" element={<CategoryList />} />
+                <Route path="/categories/add" element={<AddUser />} />
+                <Route path="/institutions" element={<InstitutionList />} />
+                <Route path="/institutions/:id" element={<InstitutionDetails />} />
+                <Route path="/institutions/add" element={<AddInstitution />} />
+                <Route path="/institutions/edit/:id" element={<EditInstitution />} />
+                <Route path="/:institutionId/branches/add" element={<AddBranch />} />
+                <Route path="/:institutionId/branches/edit/:id" element={<EditBranch />} />
                 <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
                 <Route path="erasmus-competitions/" element={<CompetitionsList/>} />
                 <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />

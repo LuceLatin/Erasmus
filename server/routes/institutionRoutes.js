@@ -4,7 +4,7 @@ import {Institution} from "../models/Institution/Institution.js";
 
 const institutionRouter = express.Router();
 
-institutionRouter.post("/api/institutions", checkAuthorization, async (req, res) => {
+institutionRouter.post("/api/institutions/add", checkAuthorization, async (req, res) => {
     try {
         const newInstitution = new Institution(req.body);
         await newInstitution.save();
