@@ -17,16 +17,21 @@ const CompetitionsList = () => {
 
     useEffect(() => {
         if (response) {
-            // Filter natječaje na temelju uloge korisnika
+            const today = new Date();
+
+            // Filter natječaja na temelju uloge korisnika i provjere aktivnosti natječaja
             const filteredCompetitions = response.filter((competition) => {
-                if (isProfesor) {
-                    return competition.role === 'profesor';
-                }
+                const endDate = new Date(competition.endDate);
+                const isActive = endDate >= today; // Samo aktivni natječaji
+
                 if (isCoordinator) {
-                    return true; // Koordinator vidi sve
+                    return true; // Koordinator vidi sve (aktivne i neaktivne)
+                }
+                if (isProfesor) {
+                    return isActive && competition.role === 'profesor';
                 }
                 if (isStudent) {
-                    return competition.role === 'student';
+                    return isActive && competition.role === 'student';
                 }
                 return false;
             });
@@ -74,6 +79,10 @@ const CompetitionsList = () => {
         setError(null);
     };
 
+    const handleCompetitionClick = (id) => {
+        navigate(`/erasmus-competitions/${id}`); 
+    };
+
     const competitionNameToDelete = competitions.find(competition => competition._id === competitionToDelete)?.title;
 
     return (
@@ -94,7 +103,7 @@ const CompetitionsList = () => {
                     </thead>
                     <tbody>
                         {competitions.map((competition) => (
-                            <tr key={competition._id}>
+                            <tr key={competition._id} onClick={() => handleCompetitionClick(competition._id)} style={{ cursor: 'pointer' }}>
                                 <td>{competition.title}</td>
                                 <td>{competition.role}</td>
                                 <td>{competition.institutionType}</td>
@@ -103,10 +112,10 @@ const CompetitionsList = () => {
                                 <td>
                                     {isCoordinator && (
                                         <>
-                                            <Button variant="success" onClick={() => handleEdit(competition._id)}>
+                                            <Button variant="success" onClick={(e) => { e.stopPropagation(); handleEdit(competition._id); }}>
                                                 Edit
                                             </Button>
-                                            <Button variant="danger" onClick={() => handleDelete(competition._id)} className="ms-2">
+                                            <Button variant="danger" onClick={(e) => { e.stopPropagation(); handleDelete(competition._id); }} className="ms-2">
                                                 Delete
                                             </Button>
                                         </>
