@@ -1,114 +1,128 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Button } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom'; 
-import ConfirmationModal from '../../components/Modal/modal'; // Pretpostavljam da koristiš ovu komponentu
+import { ListGroup, Alert, Button, Collapse } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import ConfirmationModal from '../../components/Modal/modal';
+import './BranchList.css';
 
-function UserList() {
-  const [users, setUsers] = useState([]);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [userIdToDelete, setUserIdToDelete] = useState(null);
-  const [error, setError] = useState(null);
-  const [userNameToDelete, setUserNameToDelete] = useState('');
-  const navigate = useNavigate();
+const BranchList = ({ institutionId }) => {
+    const [branches, setBranches] = useState([]);
+    const [error, setError] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [branchToDelete, setBranchToDelete] = useState(null);
+    const [open, setOpen] = useState(true); // Dodano stanje za Collapse
+    const navigate = useNavigate();
 
-  useEffect(() => {
-    fetch('/api/users')
-      .then((response) => response.json())
-      .then((data) => setUsers(data))
-      .catch((err) => console.error('Error fetching users:', err));
-  }, []);
+    useEffect(() => {
+        const fetchBranches = async () => {
+            try {
+                const response = await fetch(`/api/branches?institution=${institutionId}`);
+                const data = await response.json();
+                if (data.error) {
+                    setError(data.error);
+                    return;
+                }
+                setBranches(data);
+            } catch (err) {
+                setError('Failed to fetch branches');
+            }
+        };
+        fetchBranches();
+    }, [institutionId]);
 
-  const handleEdit = (userId) => {
-    navigate(`/users/edit/${userId}`);
-  };
+    const handleShowModal = (branch) => {
+        setBranchToDelete(branch);
+        setShowDeleteModal(true);
+    };
 
-  const handleDeleteClick = (userId, userName) => {
-    setUserIdToDelete(userId);
-    setUserNameToDelete(userName);
-    setShowDeleteModal(true);
-  };
+    const handleCloseModal = () => {
+        setBranchToDelete(null);
+        setShowDeleteModal(false);
+    };
 
-  const confirmDelete = () => {
-    if (userIdToDelete) {
-      fetch(`/api/users/${userIdToDelete}`, {
-        method: 'DELETE',
-      })
-        .then((response) => {
-          if (response.ok) {
-            setUsers((prevUsers) =>
-              prevUsers.filter((user) => user._id !== userIdToDelete)
-            );
-            setShowDeleteModal(false);
-          } else {
-            setError('Greška prilikom brisanja korisnika.');
-          }
-        })
-        .catch((err) => {
-          setError('Greška: ' + err.message);
-        });
+    const confirmDelete = async () => {
+        if (!branchToDelete) return;
+
+        try {
+            const response = await fetch(`/api/branches/${branchToDelete._id}`, {
+                method: 'DELETE',
+            });
+            const data = await response.json();
+            if (data.error) {
+                setError(data.error);
+                return;
+            }
+            setBranches((prev) => prev.filter((branch) => branch._id !== branchToDelete._id));
+            handleCloseModal();
+        } catch (err) {
+            setError('Failed to delete branch');
+        }
+    };
+
+    const handleEdit = (id) => {
+        navigate(`/${institutionId}/branches/edit/${id}`);
+    };
+
+    if (error) {
+        return <Alert variant="danger">Error: {error}</Alert>;
     }
-  };
 
-  const handleAddUserClick = () => {
-    navigate('/users/add');
-  };
+    return (
+        <div className="branches-section black-border gray-background mt-2 mb-2">
+            <div onClick={() => setOpen(!open)}
+                aria-controls="branch-list"
+                aria-expanded={open}
+                style={{ cursor: 'pointer' }}
+                >
+              <h2>Odjeli</h2>
+            </div>
+            
+            <Collapse in={open}>
+                <div id="branch-list">
+                    <Button variant="primary" className="mb-2" onClick={() => navigate(`/${institutionId}/branches/add`)}>
+                        Dodaj odjel
+                    </Button>
+                    {branches.length === 0 ? (
+                        <Alert variant="info">Nema dostupnih odjela za ovu instituciju.</Alert>
+                    ) : (
+                        <ListGroup>
+                            {branches.map((branch) => (
+                                <ListGroup.Item key={branch._id} className="d-flex justify-content-between align-items-center gray-background">
+                                    <div>
+                                        <strong>{branch.name}</strong> - {branch.address}, {branch.city}, {branch.country}
+                                    </div>
+                                    <div>
+                                        <Button
+                                            variant="success"
+                                            className="me-2"
+                                            onClick={() => handleEdit(branch._id)}
+                                        >
+                                            Edit
+                                        </Button>
+                                        <Button
+                                            variant="danger"
+                                            onClick={() => handleShowModal(branch)}
+                                        >
+                                            Delete
+                                        </Button>
+                                    </div>
+                                </ListGroup.Item>
+                            ))}
+                        </ListGroup>
+                    )}
+                </div>
+            </Collapse>
+            <ConfirmationModal
+                show={showDeleteModal}
+                handleClose={handleCloseModal}
+                handleConfirm={confirmDelete}
+                title="Potvrda brisanja"
+                body={`Jeste li sigurni da želite obrisati odjel: ${branchToDelete?.name}?`}
+                confirmLabel="Obriši"
+                closeLabel="Zatvori"
+                error={error}
+            />
+        </div>
+    );
+};
 
-  return (
-    <div>
-      <h1 className="left-aligned heading">Korisnici</h1>
-      <div className="d-flex justify-content-start mb-3">
-        <Button variant="primary" onClick={handleAddUserClick}>
-          Dodaj korisnika
-        </Button>
-      </div>
-      <Table striped bordered hover responsive>
-        <thead>
-          <tr>
-            <th>Ime</th>
-            <th>Prezime</th>
-            <th>Korisničko ime</th>
-            <th>Akcije</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.length > 0 &&
-            users.map((user) => (
-              <tr key={user._id}>
-                <td>{user.firstName}</td>
-                <td>{user.lastName}</td>
-                <td>{user.username}</td>
-                <td>
-                  <Button
-                    variant="success"
-                    onClick={() => handleEdit(user._id)}
-                    className="me-2"
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    onClick={() => handleDeleteClick(user._id, user.username)}
-                  >
-                    Delete
-                  </Button>
-                </td>
-              </tr>
-            ))}
-        </tbody>
-      </Table>
-      {/* Confirmation Modal */}
-      <ConfirmationModal
-        show={showDeleteModal}
-        handleClose={() => setShowDeleteModal(false)}
-        handleConfirm={confirmDelete}
-        title="Potvrda brisanja"
-        body={`Jeste li sigurni da želite obrisati korisnika: ${userNameToDelete}?`}
-        confirmLabel="Delete"
-        closeLabel="Close"
-        error={error}
-      />
-    </div>
-  );
-}
-
-export default UserList;
+export default BranchList;

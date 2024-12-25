@@ -120,7 +120,6 @@ const CategoryList = () => {
                 </ListGroup>
             )}
 
-            {/* Confirmation Modal */}
             <ConfirmationModal
                 show={showDeleteModal}
                 handleClose={handleCloseModal}

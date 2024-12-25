@@ -91,18 +91,30 @@ branchRoutes.get("/api/branches/:id", validateToken, checkAuthorization2(['koord
     }
 });
 
-branchRoutes.put("/api/branches/edit/:id", checkAuthorization, async (req, res) => {
+branchRoutes.put('/api/:institutionId/branches/edit/:branchId', checkAuthorization, async (req, res) => {
     try {
-        const updatedBranch = await Branch.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
-        if (!updatedBranch) {
-            return res.status(404).json({ error: "Branch not found" });
-        }
-        res.status(200).json(updatedBranch);
+      // Destructure only the fields you want to update from req.body
+      const { name, address, city, country } = req.body;
+  
+      // Update the branch
+      const updatedBranch = await Branch.findByIdAndUpdate(
+        req.params.branchId, // Use branchId from the route
+        { name, address, city, country }, // Only update these fields
+        { new: true, runValidators: true }
+      );
+  
+      if (!updatedBranch) {
+        return res.status(404).json({ error: 'Branch not found' });
+      }
+  
+      res.status(200).json(updatedBranch);
     } catch (error) {
-        console.error("Error updating branch:", error);
-        res.status(500).json({ error: "Failed to update branch" });
+      console.error('Error updating branch:', error);
+      res.status(500).json({ error: 'Failed to update branch' });
     }
-});
+  });
+  
+  
 
 branchRoutes.delete("/api/branches/:id", checkAuthorization, async (req, res) => {
     try {
