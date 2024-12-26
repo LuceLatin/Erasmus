@@ -28,7 +28,6 @@ export function ApplicationSummary({ user, userChoice, files, competitionData, b
                 method: "POST",
                 headers: {
                     "Authorization": `Bearer ${accessToken}`,
-                    // Remove "Content-Type" as it's automatically set by FormData
                 },
                 body: formData,
             });
@@ -51,9 +50,7 @@ export function ApplicationSummary({ user, userChoice, files, competitionData, b
         <div className="container my-4">
             <h2 className="mb-4">Vaša prijava</h2>
 
-            {/* First Row: User Info and Competition Details */}
             <div className="row mb-3">
-                {/* User Information */}
                 <div className="col-md-6">
                     <div className="card">
                         <div className="card-header bg-primary text-white">Informacije o korisniku</div>
@@ -68,7 +65,6 @@ export function ApplicationSummary({ user, userChoice, files, competitionData, b
                     </div>
                 </div>
 
-                {/* Competition Details */}
                 <div className="col-md-6">
                     <div className="card">
                         <div className="card-header bg-secondary text-white">Detalji o natjecaju</div>
@@ -84,7 +80,6 @@ export function ApplicationSummary({ user, userChoice, files, competitionData, b
                 </div>
             </div>
 
-            {/* Second Row: Uploaded Files */}
             <div className="card mb-3">
                 <div className="card-header bg-warning text-dark">Učitane datoteke</div>
                 <div className="card-body">
@@ -97,18 +92,15 @@ export function ApplicationSummary({ user, userChoice, files, competitionData, b
                 </div>
             </div>
 
-            {/* Third Row: User Choices */}
             <div className="card mb-3">
                 <div className="card-header bg-info text-white">Korisnički odabiri</div>
                 <div className="card-body">
                     {Object.entries(userChoice).map(([key, branch], index) => (
                         branch && (
                             <div key={key} className="card mb-3">
-                                {/* Card Header for each choice */}
                                 <div className="card-header bg-primary text-white">
                                     {index === 0 ? "Prvi odabir" : index === 1 ? "Drugi odabir" : "Treći odabir"}
                                 </div>
-                                {/* Card Body with branch details */}
                                 <div className="card-body">
                                     {branches.some(b => b.branches.some(subBranch => subBranch._id === branch._id)) && (
                                         branches.map(b =>
