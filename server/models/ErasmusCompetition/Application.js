@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const erasmusApplicationSchema = new mongoose.Schema(
     {
@@ -33,6 +33,4 @@ const erasmusApplicationSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const ErasmusApplication = mongoose.model("ErasmusApplication", erasmusApplicationSchema);
-
-module.exports = ErasmusApplication;
+export const ErasmusApplication = mongoose.model("ErasmusApplication", erasmusApplicationSchema);

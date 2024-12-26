@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const applicantChoicesSchema = new mongoose.Schema(
     {
@@ -26,6 +26,4 @@ const applicantChoicesSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const ApplicantChoices = mongoose.model("ApplicantChoices", applicantChoicesSchema);
-
-module.exports = ApplicantChoices;
+export const ApplicantChoices = mongoose.model("ApplicantChoices", applicantChoicesSchema);
