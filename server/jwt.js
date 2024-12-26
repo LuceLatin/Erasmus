@@ -41,26 +41,21 @@ const checkAuthorization = (req, res, next) => {
             const userRole = decodedToken.role;
 
             if (userRole === "koordinator") {
-                // Perform authorized actions for the role
                 next();
             } else {
-                // Handle unauthorized actions
                 res.status(403).json({
                     error: "User is not authorized.",
                 });
             }
         } catch (err) {
-            // Handle the case when the access token is invalid or expired
             res.status(498).json({ error: "Invalid access token." });
         }
     } else {
-        // Handle the case when the access token is not present in the cookies
         res.status(401).json({ error: "Access token not found." });
     }
 };
 
 
-//for access to all roles
 const checkAuthorization2 = (allowedRoles) => (req, res, next) => {
     const accessToken = req.cookies["access-token"];
 
@@ -71,9 +66,6 @@ const checkAuthorization2 = (allowedRoles) => (req, res, next) => {
     try {
         const decodedToken = jwt.verify(accessToken, "jwtsecret");
         const userRole = decodedToken.role;
-
-        //console.log("Decoded Token:", decodedToken);  
-        //console.log("User Role:", userRole);
 
         if (allowedRoles.includes(userRole)) {
             req.userId = decodedToken.id;
