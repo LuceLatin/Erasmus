@@ -9,7 +9,6 @@ export function BranchChooser({ onSubmit, onUserChoice, choice, title, branches 
 
     const handleRowClick = (branch) => {
         setSelectedBranch(selectedBranch === branch ? null : branch);
-        console.log('Selected Branch ID:', branch);
     };
 
     const handleSubmit = () => {
