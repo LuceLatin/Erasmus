@@ -1,5 +1,4 @@
-const mongoose = require("mongoose");
-
+import mongoose from "mongoose";
 const fileSchema = new mongoose.Schema(
     {
         application: {
@@ -11,8 +10,8 @@ const fileSchema = new mongoose.Schema(
             type: String,
             required: true,
         },
-        filePath: {
-            type: String,
+        fileId: {
+            type: mongoose.Schema.Types.ObjectId,
             required: true,
         },
         uploadedAt: {
@@ -23,6 +22,4 @@ const fileSchema = new mongoose.Schema(
     { timestamps: true }
 );
 
-const File = mongoose.model("File", fileSchema);
-
-module.exports = File;
+export const File = mongoose.model("File", fileSchema);

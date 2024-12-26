@@ -1,11 +1,12 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 let isConnected;
+let bucket;
 
 export const connectDB = async () => {
     if (isConnected) {
         console.log("Using existing database connection");
-        return mongoose.connection;
+        return { connection: mongoose.connection, bucket };
     }
 
     try {
@@ -16,12 +17,21 @@ export const connectDB = async () => {
             user: process.env.DB_USER,
             pass: process.env.DB_PASS,
             dbName: 'erazmus'
-        }
-        const conn = await mongoose.connect(process.env.MONGO_URI, options);
+        };
 
+        const conn = await mongoose.connect(process.env.MONGO_URI, options);
         isConnected = conn.connections[0].readyState;
         console.log(`MongoDB Connected: ${conn.connection.host}`);
-        return conn;
+
+       if (isConnected) {
+            bucket = new mongoose.mongo.GridFSBucket(mongoose.connection.db, {
+                bucketName: "filesBucket",
+            });
+            console.log("GridFSBucket initialized");
+        }
+
+        return { connection: conn, bucket };
+
     } catch (error) {
         console.error(`Error: ${error.message}`);
         process.exit(1);
