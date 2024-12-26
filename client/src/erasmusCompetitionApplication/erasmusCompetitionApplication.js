@@ -103,7 +103,7 @@ export function ErasmusCompetitionApplication() {
     return (
         <div className="d-flex align-items-center flex-column mt-3">
             <h1>Prijava na natjecaj - <b>{competitionData?.title}</b></h1>
-            <RenderStep />
+            {error || <RenderStep/>}
         </div>
     );
 }

@@ -10,7 +10,6 @@ branchRoutes.get("/api/branches/grouped", validateToken, checkAuthorization2(['k
     try {
         const branches = await Branch.find().populate('institution');
 
-        console.log('branches:', branches);
         const groupedBranches = groupBranchesByInstitution(branches);
 
         res.json(Object.values(groupedBranches));
@@ -30,7 +29,6 @@ branchRoutes.get("/api/branches/grouped/:id", validateToken, checkAuthorization2
             return res.status(404).json({ error: 'No branches found for the specified category.' });
         }
 
-        console.log('branches:', branches);
         const groupedBranches = groupBranchesByInstitution(branches);
 
         res.json(Object.values(groupedBranches));
