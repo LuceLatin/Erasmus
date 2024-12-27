@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom'; // Dodan 'Link' za navigaciju
 import './CompetitionDetails.css';
 import { jwtDecode } from 'jwt-decode'; 
+import {useGetCurrentUser} from "../hooks/useGetCurrentUser";
+
 
 const CompetitionDetails = () => {
-    const { id } = useParams()
+    const { id } = useParams();
     const [competition, setCompetition] = useState(null);
     const [userRole, setUserRole] = useState(null);
     const [error, setError] = useState(null);
+    const {user} = useGetCurrentUser()
+    console.log(user)
 
     useEffect(() => {
         const token = document.cookie.split('access-token=')[1]?.split(';')[0];
@@ -25,16 +29,13 @@ const CompetitionDetails = () => {
         }
     }, []);
     
-
     useEffect(() => {
-       
         const fetchCompetitionDetails = async () => {
             try {
                 const response = await fetch(`/api/competitions/${id}`, {
                     method: 'GET',
                     credentials: 'include',  
                 });
-                
 
                 const data = await response.json();
 
@@ -64,6 +65,11 @@ const CompetitionDetails = () => {
     return (
         <div className="competition-details-container">
             <h1 className="competition-title">{competition.title}</h1>
+            {user.role == "koordinator" && <p>
+                <Link to={`/${competition._id}/applications`} style={{ textDecoration: 'none' }}>
+                    Idi na prijave
+                </Link>
+            </p>}
             <div className="competition-description">
                 <p><strong>Opis:</strong> {competition.description}</p>
                 <p><strong>Vrsta institucije:</strong> {competition.institutionType}</p>
@@ -78,7 +84,6 @@ const CompetitionDetails = () => {
                     <p><strong>Vrijedi do:</strong> {new Date(competition.endDate).toLocaleDateString()}</p>
                 </div>
             </div>
-
         </div>
     );
 };

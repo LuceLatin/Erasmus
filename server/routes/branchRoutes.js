@@ -84,6 +84,18 @@ branchRoutes.get('/api/branches', async (req, res) => {
   }
 });
 
+// Ruta za dohvaćanje odjela svih institucija
+branchRoutes.get('/api/allbranches', async (req, res) => {
+
+  try {
+    const branches = await Branch.find(); 
+    res.status(200).json(branches);
+  } catch (error) {
+    console.error('Error fetching branches:', error);
+    res.status(500).json({ error: 'Failed to fetch branches' });
+  }
+});
+
 branchRoutes.put('/api/:institutionId/branches/edit/:branchId', checkAuthorization, async (req, res) => {
   try {
     // Destructure only the fields you want to update from req.body

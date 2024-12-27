@@ -9,7 +9,7 @@ const BranchList = ({ institutionId }) => {
     const [error, setError] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [branchToDelete, setBranchToDelete] = useState(null);
-    const [open, setOpen] = useState(true); // Dodano stanje za Collapse
+    const [open, setOpen] = useState(true); 
     const navigate = useNavigate();
 
     useEffect(() => {

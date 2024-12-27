@@ -40,7 +40,7 @@ function EditBranch() {
             address: data.address,
             city: data.city,
             country: data.country,
-            category: data.category, // Map category correctly
+            category: data.category, 
           });
         } else {
           setError(data.error || 'Greška prilikom učitavanja podataka odjela');
@@ -70,7 +70,7 @@ function EditBranch() {
       });
 
       if (response.ok) {
-        navigate(`/institutions/${institutionId}`); // Navigate to branch list or success page
+        navigate(`/institutions/${institutionId}`); 
       } else {
         const errorData = await response.json();
         setError(errorData.error || 'Greška prilikom uređivanja odjela');

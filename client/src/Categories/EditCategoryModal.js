@@ -7,7 +7,6 @@ const EditCategoryModal = ({ show, handleClose, categoryId, refreshCategories })
 
     useEffect(() => {
         if (categoryId) {
-            // Fetch the category details to populate the modal fields
             fetch(`/api/categories/${categoryId}`)
                 .then((response) => response.json())
                 .then((data) => setCategoryName(data.name))
@@ -29,7 +28,7 @@ const EditCategoryModal = ({ show, handleClose, categoryId, refreshCategories })
             });
 
             if (response.ok) {
-                refreshCategories(); // Refresh the categories list
+                refreshCategories(); 
                 handleClose();
             } else {
                 setError('Failed to update category');
