@@ -24,7 +24,6 @@ function AddInstitution() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Slanje podataka na API za dodavanje institucije
     fetch('/api/institutions/add', {
       method: 'POST',
       headers: {

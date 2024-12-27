@@ -2,20 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { ListGroup, Alert, Button, Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../components/Modal/modal';
-import AddCategoryModal from './AddCategoryModal'; // Add the AddCategoryModal
-import EditCategoryModal from './EditCategoryModal'; // Add the EditCategoryModal
+import AddCategoryModal from './AddCategoryModal'; 
+import EditCategoryModal from './EditCategoryModal';
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState(null);
-    const [showDeleteModal, setShowDeleteModal] = useState(false); // State for delete modal visibility
-    const [showAddModal, setShowAddModal] = useState(false); // State for add modal visibility
-    const [showEditModal, setShowEditModal] = useState(false); // State for edit modal visibility
-    const [categoryToDelete, setCategoryToDelete] = useState(null); // State to store the category to delete
-    const [categoryToEdit, setCategoryToEdit] = useState(null); // State to store the category to edit
+    const [showDeleteModal, setShowDeleteModal] = useState(false); 
+    const [showAddModal, setShowAddModal] = useState(false); 
+    const [showEditModal, setShowEditModal] = useState(false); 
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
+    const [categoryToEdit, setCategoryToEdit] = useState(null); 
     const navigate = useNavigate();
 
-    // Fetch categories
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -69,7 +68,6 @@ const CategoryList = () => {
     };
 
     const refreshCategories = () => {
-        // Refresh the categories list after adding or editing
         const fetchCategories = async () => {
             try {
                 const response = await fetch('/api/categories');
@@ -131,14 +129,12 @@ const CategoryList = () => {
                 error={error}
             />
 
-            {/* Add Category Modal */}
             <AddCategoryModal
                 show={showAddModal}
                 handleClose={handleCloseModal}
                 refreshCategories={refreshCategories}
             />
 
-            {/* Edit Category Modal */}
             <EditCategoryModal
                 show={showEditModal}
                 handleClose={handleCloseModal}

@@ -111,7 +111,6 @@ function InstitutionList() {
         </tbody>
       </Table>
 
-      {/* Modal za potvrdu brisanja */}
       <ConfirmationModal
         show={showDeleteModal}
         handleClose={handleCloseModal}

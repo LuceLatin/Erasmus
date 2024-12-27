@@ -19,7 +19,7 @@ const AddCategoryModal = ({ show, handleClose, refreshCategories }) => {
             });
 
             if (response.ok) {
-                refreshCategories(); // Refresh the categories list
+                refreshCategories(); 
                 handleClose();
             } else {
                 setError('Failed to add category');

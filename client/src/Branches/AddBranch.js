@@ -10,13 +10,12 @@ function AddBranch() {
     address: '',
     city: '',
     country: '',
-    category: '', // Initial category state
+    category: '', 
   });
-  const [categories, setCategories] = useState([]); // State to store categories
+  const [categories, setCategories] = useState([]); 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch categories on component mount
   useEffect(() => {
     const fetchCategories = async () => {
       try {
@@ -25,7 +24,7 @@ function AddBranch() {
         if (data.error) {
           setError(data.error);
         } else {
-          setCategories(data); // Set categories to state
+          setCategories(data);
         }
       } catch (err) {
         setError('Greška prilikom učitavanja kategorija');
@@ -44,7 +43,6 @@ function AddBranch() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Sending data to API to add branch
     fetch('/api/branches/add', {
       method: 'POST',
       headers: {
@@ -52,7 +50,7 @@ function AddBranch() {
       },
       body: JSON.stringify({
         ...branchData,
-        institution: institutionId,  // Include institution ID
+        institution: institutionId,  
       }),
     })
       .then((response) => {
@@ -115,7 +113,7 @@ function AddBranch() {
         <Form.Group controlId="category" className="mb-3">
           <Form.Label>Kategorija</Form.Label>
           <Form.Control
-            as="select" // Changed to select dropdown
+            as="select"
             name="category"
             value={branchData.category}
             onChange={handleChange}

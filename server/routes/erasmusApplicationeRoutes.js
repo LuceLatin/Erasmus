@@ -2,7 +2,7 @@ import express from 'express';
 import multer from 'multer';
 
 import { connectDB } from '../dbInstance.js';
-import { validateToken } from '../jwt.js';
+import { checkAuthorization, validateToken } from '../jwt.js';
 import { ApplicantChoices } from '../models/ErasmusCompetition/ApplicantChoices.js';
 import { ErasmusApplication } from '../models/ErasmusCompetition/Application.js';
 import { uploadFileToGridFS } from '../services/fsgrid.js';
@@ -86,6 +86,61 @@ erasmusApplicationRouter.post(
     }
   },
 );
+
+erasmusApplicationRouter.get('/api/:competitionId/applications', checkAuthorization, async (req, res) => {
+  const { competitionId } = req.params;
+
+  try {
+    const applications = await ErasmusApplication.find({ erasmusCompetition: competitionId })
+      .populate('user', 'username email')
+      .exec();
+
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijava.' });
+  }
+});
+
+erasmusApplicationRouter.get('/api/:competitionId/applications/:applicationId', async (req, res) => {
+  const { competitionId, applicationId } = req.params;
+
+  try {
+    const application = await ErasmusApplication.findOne({
+      _id: applicationId,
+      erasmusCompetition: competitionId,
+    })
+      .populate('user', 'username email')  
+      .populate('erasmusCompetition', 'title') 
+      .exec();
+
+    if (!application) {
+      return res.status(404).json({ error: 'Prijava nije pronađena.' });
+    }
+
+    res.status(200).json(application);
+  } catch (error) {
+    console.error('Error fetching application:', error);
+    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijave.' });
+  }
+});
+
+erasmusApplicationRouter.get('/api/applications/:userId', async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const applications = await ErasmusApplication.find({ user: userId })
+      .populate('user', 'username email')
+      .populate('erasmusCompetition', '_id title institutionType')
+      .exec();
+
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijava.' });
+  }
+});
+
 
 function getBranchChoice(branchKey) {
   if (branchKey === 'firstBranch') {

@@ -40,6 +40,7 @@ erasmusCompetitionRouter.get(
       if (!competition) {
         return res.status(404).json({ error: 'Competition not found' });
       }
+      console.log(competition)
       res.status(200).json(competition);
     } catch (error) {
       console.error('Error fetching competition:', error);

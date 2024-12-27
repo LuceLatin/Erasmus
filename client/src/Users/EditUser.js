@@ -39,7 +39,7 @@ function EditUser() {
         }
 
         // Fetch branches
-        const branchResponse = await fetch('/api/branches');
+        const branchResponse = await fetch('/api/allbranches');
         const branchData = await branchResponse.json();
         if (branchData.error) {
           setError(branchData.error);
@@ -65,7 +65,6 @@ function EditUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send data to your API endpoint to update the user
     fetch(`/api/users/${id}`, {
       method: 'PUT',
       headers: {
@@ -78,7 +77,6 @@ function EditUser() {
         if (data.error) {
           setError(data.error);
         } else {
-          // Redirect to user list page on success
           navigate('/users');
         }
       })
@@ -211,21 +209,21 @@ function EditUser() {
           </Form.Select>
         </Form.Group>
         <Form.Group controlId="branch" className="mb-3">
-          <Form.Label>Grana</Form.Label>
-          <Form.Select
-            name="branch"
-            value={userData.branch}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Odaberite granu</option>
-            {branches.map((branch) => (
-              <option key={branch._id} value={branch._id}>
+    <Form.Label>Odjel</Form.Label>
+    <Form.Select
+        name="branch"
+        value={userData.branch || ''} 
+        onChange={handleChange}
+        required
+    >
+        {branches.map((branch) => (
+            <option key={branch._id} value={branch._id}>
                 {branch.name}
-              </option>
-            ))}
-          </Form.Select>
-        </Form.Group>
+            </option>
+        ))}
+    </Form.Select>
+</Form.Group>
+
         <Button variant="primary" type="submit">
           Spremi promjene
         </Button>

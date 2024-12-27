@@ -26,7 +26,7 @@ function AddUser() {
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await fetch('/api/branches'); // Endpoint for fetching branches
+        const response = await fetch('/api/allbranches'); // Endpoint for fetching branches
         const data = await response.json();
         if (data.error) {
           setError(data.error);
@@ -39,6 +39,7 @@ function AddUser() {
     };
     fetchBranches();
   }, []);
+  console.log("branches", branches)
 
   const handleChange = (e) => {
     setUserData({
@@ -188,14 +189,14 @@ function AddUser() {
           </Form.Select>
         </Form.Group>
         <Form.Group controlId="branch" className="mb-3">
-          <Form.Label>Grana</Form.Label>
+          <Form.Label>Odjel</Form.Label>
           <Form.Select
             name="branch"
             value={userData.branch}
             onChange={handleChange}
             required
           >
-            <option value="">Odaberite granu</option>
+            <option value="">Odaberite odjel</option>
             {branches.map((branch) => (
               <option key={branch._id} value={branch._id}>
                 {branch.name}

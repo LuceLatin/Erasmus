@@ -3,7 +3,7 @@ import { Form, Button, Container } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
 
 function EditInstitution() {
-  const { id } = useParams(); // Dohvaća ID iz URL-a
+  const { id } = useParams(); 
   const [institutionData, setInstitutionData] = useState({
     firstName: '',
     lastName: '',
@@ -22,7 +22,6 @@ function EditInstitution() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Dohvati podatke o instituciji prema ID-ju
     fetch(`/api/institutions/${id}`)
       .then((response) => response.json())
       .then((data) => {
@@ -45,7 +44,6 @@ function EditInstitution() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Ažuriraj podatke o instituciji
     fetch(`/api/institutions/${id}`, {
       method: 'PUT',
       headers: {
@@ -55,7 +53,7 @@ function EditInstitution() {
     })
       .then((response) => {
         if (response.ok) {
-          navigate('/institutions'); // Preusmjeri na listu institucija
+          navigate('/institutions'); 
         } else {
           console.error('Greška pri ažuriranju institucije.');
         }

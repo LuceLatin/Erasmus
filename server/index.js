@@ -13,6 +13,7 @@ import erasmusCompetitionRouter from './routes/erasmusCompetition.js';
 import institutionRoutes from './routes/institutionRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { seedDb } from './seed/seed.js';
+import choiceRouter from './routes/choiceRoutes.js';
 dotenv.config();
 
 app.use(cors());
@@ -28,6 +29,7 @@ app.use(categoryRouter);
 app.use(institutionRoutes);
 app.use(authenticationRouter);
 app.use(erasmusApplicationRouter);
+app.use(choiceRouter);
 
 const mongoConnection = connectDB();
 console.log(mongoConnection);

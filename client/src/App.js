@@ -10,7 +10,7 @@ import CompetitionsList from "./erasmusCompetition/CompetitionsList/Competitions
 import EditErasmusCompetition from "./erasmusCompetition/EditErasmusCompetition/EditErasmusCompetition"
 import PastCompetitions from "./erasmusCompetition/PastCompetitions/PastCompetitions"
 import CompetitionDetails from './CompetitionDetails/CompetitionDetails';
-import {Header} from "./components/header/Header";
+import {Header} from "./components/header/Header";  
 import {Footer} from "./components/footer/Footer";
 import Login from './Authentication/login';
 import {UserProfile} from "./userProfile/userProfile";
@@ -25,6 +25,10 @@ import AddBranch from './Branches/AddBranch';
 import CategoryList from './Categories/CategoryList';
 import EditBranch from './Branches/EditBranch';
 import EditUser from './Users/EditUser';
+import ApplicationList from './Applications/ApplicationList';
+import ApplicationDetails from './Applications/ApplicationDetails/ApplicationDetails';
+import MyApplicationList from './Applications/MyApplicationList';
+import EditApplication from './Applications/EditApplication';
 
 function App() {
     const { user, loading } = useGetCurrentUser();
@@ -53,10 +57,14 @@ function App() {
                 <Route path="/:institutionId/branches/edit/:id" element={<EditBranch />} />
                 <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
                 <Route path="erasmus-competitions/" element={<CompetitionsList/>} />
+                <Route path="/:competitionId/applications/" element={<ApplicationList/>} />
+                <Route path="/:competitionId/applications/:id" element={<ApplicationDetails />} />
                 <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
                 <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
                 <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
                 <Route path="/erasmus-competitions/:id/apply" element={<ErasmusCompetitionApplication />} />
+                <Route path="/my-applications" element={<MyApplicationList />} />
+                <Route path="/:competitionId/applications/edit/:applicationId" element={<EditApplication />} />                
                 <Route path="/me" element={ <UserProfile user={user}/> } />
             </Route>
 

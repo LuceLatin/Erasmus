@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import './InstitutionDetails.css';
-import {jwtDecode} from 'jwt-decode'; // Fixing the import (no curly braces needed for default export).
+import {jwtDecode} from 'jwt-decode'; 
 import BranchList from '../../Branches/BranchList/BranchList';
 
 const InstitutionDetails = () => {
