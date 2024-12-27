@@ -1,5 +1,6 @@
 import express from 'express';
 import multer from 'multer';
+import mongoose from 'mongoose';
 
 import { connectDB } from '../dbInstance.js';
 import { checkAuthorization, validateToken } from '../jwt.js';
@@ -110,8 +111,8 @@ erasmusApplicationRouter.get('/api/:competitionId/applications/:applicationId', 
       _id: applicationId,
       erasmusCompetition: competitionId,
     })
-      .populate('user', 'username email')  
-      .populate('erasmusCompetition', 'title') 
+      .populate('user', 'username email')
+      .populate('erasmusCompetition', 'title')
       .exec();
 
     if (!application) {
@@ -141,7 +142,6 @@ erasmusApplicationRouter.get('/api/applications/:userId', async (req, res) => {
   }
 });
 
-
 function getBranchChoice(branchKey) {
   if (branchKey === 'firstBranch') {
     return 'first';
@@ -152,3 +152,48 @@ function getBranchChoice(branchKey) {
   }
   throw new Error('Invalid branch key');
 }
+
+erasmusApplicationRouter.delete('/api/applications-delete/:id', async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const { bucket } = await connectDB();
+    if (!bucket) {
+      console.error('Bucket is not initialized.');
+      return res.status(500).json({ message: 'GridFS bucket is not available' });
+    }
+
+    const application = await ErasmusApplication.findById(id);
+
+    if (!application) {
+      return res.status(404).json({ message: 'Application not found' });
+    }
+
+    if (application.files && application.files.length > 0) {
+      for (const fileId of application.files) {
+        try {
+          const objectId = mongoose.Types.ObjectId.isValid(fileId) ? new mongoose.Types.ObjectId(fileId) : null;
+
+          if (!objectId) {
+            console.warn(`Invalid file ID: ${fileId}, skipping...`);
+            continue;
+          }
+
+          await bucket.delete(objectId);
+          console.log(`File with ID ${fileId} deleted successfully.`);
+        } catch (fileError) {
+          console.error(`Error deleting file with ID ${fileId}:`, fileError);
+        }
+      }
+    }
+
+    await ErasmusApplication.findByIdAndDelete(id);
+
+    await ApplicantChoices.deleteMany({ application: id });
+
+    res.status(200).json({ message: 'Application, related choices, and files deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting application and related data:', error);
+    res.status(500).json({ message: 'Failed to delete application and related data' });
+  }
+});
