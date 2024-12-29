@@ -24,7 +24,7 @@ export const uploadFileToGridFS = async (applicationId, file, bucket) => {
   }
 };
 
-/* export const getFileFromGridFS = async (fileId, gfs) => {
+export const getFileFromGridFS = async (fileId, gfs) => {
   return new Promise((resolve, reject) => {
     const downloadStream = gfs.openDownloadStream(fileId);
     const chunks = [];
@@ -43,41 +43,4 @@ export const uploadFileToGridFS = async (applicationId, file, bucket) => {
     });
   });
 };
- */
-
-export const getFileFromGridFS = async (fileId, gfs) => {
-  return new Promise((resolve, reject) => {
-    // Provjera da li je gfs inicijaliziran
-    if (!gfs) {
-      return reject(new Error('GridFS not initialized.'));
-    }
-
-    // Provjera da li je fileId valjan
-    if (!fileId) {
-      return reject(new Error('File ID is required.'));
-    }
-
-    // Pokušaj dohvaćanja streama
-    const downloadStream = gfs.openDownloadStream(fileId);
-
-    // Provjera da li je downloadStream validan
-    if (!downloadStream) {
-      return reject(new Error(`No file found with ID: ${fileId}`));
-    }
-
-    const chunks = [];
-
-    downloadStream.on('data', (chunk) => {
-      chunks.push(chunk);
-    });
-
-    downloadStream.on('end', () => {
-      const buffer = Buffer.concat(chunks);
-      resolve(buffer); // Vraća sadržaj datoteke kao buffer
-    });
-
-    downloadStream.on('error', (err) => {
-      reject(err); // Vraća grešku ako se nešto dogodi tijekom preuzimanja
-    });
-  });
-};
+ 
