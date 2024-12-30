@@ -44,7 +44,7 @@ export function Header() {
     ) : (
                                         <NavDropdown.Item href="/past-applications/">Moje prošle prijave</NavDropdown.Item>
                                     )}
-                                    {user.role !== "koordinator" && <NavDropdown.Item href="/my-applications">Moje prijave</NavDropdown.Item>
+                                    {user.role !== "koordinator" && <NavDropdown.Item href="/my-applications">Moje aktivne prijave</NavDropdown.Item>
                                     }
                                 </NavDropdown>
                                 <NavDropdown title="Institucije" id="basic-nav-dropdown">
