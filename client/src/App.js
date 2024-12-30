@@ -30,6 +30,7 @@ import ApplicationDetails from './Applications/ApplicationDetails/ApplicationDet
 import MyApplicationList from './Applications/MyApplicationList';
 import EditApplication from './Applications/EditApplication';
 import PastApplications from './Applications/PastApplications';
+import ActiveApplications from './Applications/ActiveApplications'
 
 function App() {
     const { user, loading } = useGetCurrentUser();
@@ -66,7 +67,8 @@ function App() {
                 <Route path="/erasmus-competitions/:id/apply" element={<ErasmusCompetitionApplication />} />
                 <Route path="/my-applications" element={<MyApplicationList />} />
                 <Route path="/:competitionId/applications/edit/:applicationId" element={<EditApplication />} />   
-                <Route path="/past-applications" element={<PastApplications/>}/>    
+                <Route path="/past-applications" element={<PastApplications/>}/>  
+                <Route path="/active-applications" element={<ActiveApplications/>}/>   
                 <Route path="/me" element={ <UserProfile user={user}/> } />
             </Route>
 

@@ -288,3 +288,40 @@ erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
     res.status(500).send('An error occurred');
   }
 });
+
+erasmusApplicationRouter.get('/api/active-applications', async (req, res) => {
+  try {
+    const { userId, role } = req.query;
+    if (!userId || !role) {
+      return res.status(400).json({ message: 'User ID and role are required' });
+    }
+
+    const today = new Date();
+    if (role === 'koordinator') {
+      const applications = await ErasmusApplication.find()
+        .populate({
+          path: 'erasmusCompetition',
+          match: { endDate: { $gte: today } }, // Aktivni natječaji
+        })
+        .populate('user')
+        .lean();
+
+      const filteredApplications = applications.filter(app => app.erasmusCompetition);
+      return res.json(filteredApplications);
+    } else {
+      const applications = await ErasmusApplication.find({ user: userId })
+        .populate({
+          path: 'erasmusCompetition',
+          match: { endDate: { $gte: today } }, // Aktivni natječaji za korisnika
+        })
+        .lean();
+
+      const filteredApplications = applications.filter(app => app.erasmusCompetition !== null);
+      return res.json(filteredApplications);
+    }
+  } catch (error) {
+    console.error('Error in /api/active-applications:', error);
+    res.status(500).json({ message: 'Failed to fetch active applications' });
+  }
+});
+
