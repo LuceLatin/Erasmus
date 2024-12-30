@@ -16,7 +16,7 @@ function MyApplicationList() {
 
     const fetchApplications = async () => {
       try {
-        const response = await fetch(`/api/applications/${user._id}`);
+        const response = await fetch(`/api/active-applications?userId=${user._id}&role=${user.role}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -61,7 +61,7 @@ function MyApplicationList() {
 
   return (
     <div>
-      <h1 className="left-aligned heading">Moje prijave</h1>
+      <h1 className="left-aligned heading">Moje aktivne prijave</h1>
       {error && <p className="text-danger">{error}</p>}
       <Table striped bordered hover responsive>
         <thead>

@@ -37,11 +37,14 @@ export function Header() {
                                 </NavDropdown>
                                 <NavDropdown title="Prijave" id="basic-nav-dropdown">
                                     {user.role === 'koordinator' ? (
-                                        <NavDropdown.Item href="/past-applications/">Prošle prijave</NavDropdown.Item>
-                                            ) : (
+        <>
+            <NavDropdown.Item href="/active-applications/">Aktivne prijave</NavDropdown.Item>
+            <NavDropdown.Item href="/past-applications/">Prošle prijave</NavDropdown.Item>
+        </>
+    ) : (
                                         <NavDropdown.Item href="/past-applications/">Moje prošle prijave</NavDropdown.Item>
                                     )}
-                                    {user.role !== "koordinator" && <NavDropdown.Item href="/my-applications">Moje prijave</NavDropdown.Item>
+                                    {user.role !== "koordinator" && <NavDropdown.Item href="/my-applications">Moje aktivne prijave</NavDropdown.Item>
                                     }
                                 </NavDropdown>
                                 <NavDropdown title="Institucije" id="basic-nav-dropdown">
