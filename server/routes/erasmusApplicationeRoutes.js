@@ -7,7 +7,7 @@ import { checkAuthorization, validateToken } from '../jwt.js';
 import { ApplicantChoices } from '../models/ErasmusCompetition/ApplicantChoices.js';
 import { ErasmusApplication } from '../models/ErasmusCompetition/Application.js';
 import { uploadFileToGridFS, getFile } from '../services/fsgrid.js';
-
+import { GridFSBucket } from 'mongodb';
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 import { ObjectId } from 'mongodb';
@@ -154,10 +154,18 @@ erasmusApplicationRouter.get('/api/:competitionId/applications/edit/:application
 
     return res.status(200).json(response);
   } catch (error) {
-    console.error('Pogreška:', error);
-    res.status(500).send('Došlo je do pogreške prilikom dohvaćanja aplikacije');
+    console.error('Error fetching applications:', error);
+    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijava.' });
   }
 });
+
+const getFileDetails = async (fileIds, bucket) => {
+  const files = await bucket.find({ _id: { $in: fileIds.map((id) => new ObjectId(id)) } }).toArray();
+  return files.map((file) => ({
+    _id: file._id,
+    filename: file.filename,
+  }));
+};
 
 erasmusApplicationRouter.put('/api/erasmus-application/edit', async (req, res) => {
   const { competitionData, branches, userChoice, files, applicationId } = req.body;
@@ -343,6 +351,108 @@ erasmusApplicationRouter.delete('/api/applications-delete/:id', async (req, res)
   } catch (error) {
     console.error('Error deleting application and related data:', error);
     res.status(500).json({ message: 'Failed to delete application and related data' });
+  }
+});
+
+erasmusApplicationRouter.get('/api/past-applications', async (req, res) => {
+  try {
+    const { userId, role } = req.query;
+    if (!userId || !role) {
+      return res.status(400).json({ message: 'User ID and role are required' });
+    }
+
+    const today = new Date();
+    if (role === 'koordinator') {
+      const applications = await ErasmusApplication.find()
+        .populate({
+          path: 'erasmusCompetition',
+          match: { endDate: { $lt: today } },
+        })
+        .populate('user')
+        .lean();
+
+      const filteredApplications = applications.filter((app) => app.erasmusCompetition);
+      return res.json(filteredApplications);
+    } else {
+      const applications = await ErasmusApplication.find({ user: userId })
+        .populate({
+          path: 'erasmusCompetition',
+          match: { endDate: { $lt: today } },
+        })
+        .lean();
+      const filteredApplications = applications.filter((app) => app.erasmusCompetition !== null);
+      return res.json(filteredApplications);
+    }
+  } catch (error) {
+    console.error('Error in /api/past-applications:', error);
+    res.status(500).json({ message: 'Failed to fetch applications' });
+  }
+});
+
+//get and download file
+erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
+  const { bucket } = await connectDB();
+
+  if (!bucket) {
+    return res.status(500).send('GridFS bucket is not initialized');
+  }
+
+  const fileId = req.params.id;
+
+  try {
+    const objectId = new ObjectId(fileId);
+
+    const downloadStream = bucket.openDownloadStream(objectId);
+
+    //if the file exists
+    downloadStream
+      .pipe(res)
+      .on('error', (err) => {
+        console.error('Error downloading file:', err);
+        res.status(500).send('Error downloading file');
+      })
+      .on('finish', () => {
+        console.log('Download complete');
+      });
+  } catch (error) {
+    console.error('Error in download route:', error);
+    res.status(500).send('An error occurred');
+  }
+});
+
+erasmusApplicationRouter.get('/api/active-applications', async (req, res) => {
+  try {
+    const { userId, role } = req.query;
+    if (!userId || !role) {
+      return res.status(400).json({ message: 'User ID and role are required' });
+    }
+
+    const today = new Date();
+    if (role === 'koordinator') {
+      const applications = await ErasmusApplication.find()
+        .populate({
+          path: 'erasmusCompetition',
+          match: { endDate: { $gte: today } }, // Aktivni natječaji
+        })
+        .populate('user')
+        .lean();
+
+      const filteredApplications = applications.filter((app) => app.erasmusCompetition);
+      return res.json(filteredApplications);
+    } else {
+      const applications = await ErasmusApplication.find({ user: userId })
+        .populate({
+          path: 'erasmusCompetition',
+          match: { endDate: { $gte: today } }, // Aktivni natječaji za korisnika
+        })
+        .lean();
+
+      const filteredApplications = applications.filter((app) => app.erasmusCompetition !== null);
+      return res.json(filteredApplications);
+    }
+  } catch (error) {
+    console.error('Error in /api/active-applications:', error);
+    res.status(500).json({ message: 'Failed to fetch active applications' });
   }
 });
 

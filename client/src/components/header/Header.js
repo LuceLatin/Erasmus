@@ -33,7 +33,18 @@ export function Header() {
                                     <NavDropdown.Item href="/erasmus-competitions/">Dostupni natječaji</NavDropdown.Item>
                                     {user.role !== "koordinator" && <NavDropdown.Item href="/erasmus-competitions/add">Dodaj natječaj</NavDropdown.Item>}
                                     <NavDropdown.Item href="/erasmus-competitions/past">Prošli natječaji</NavDropdown.Item>
-                                    {user.role !== "koordinator" && <NavDropdown.Item href="/my-applications">Moje prijave</NavDropdown.Item>
+                                    
+                                </NavDropdown>
+                                <NavDropdown title="Prijave" id="basic-nav-dropdown">
+                                    {user.role === 'koordinator' ? (
+        <>
+            <NavDropdown.Item href="/active-applications/">Aktivne prijave</NavDropdown.Item>
+            <NavDropdown.Item href="/past-applications/">Prošle prijave</NavDropdown.Item>
+        </>
+    ) : (
+                                        <NavDropdown.Item href="/past-applications/">Moje prošle prijave</NavDropdown.Item>
+                                    )}
+                                    {user.role !== "koordinator" && <NavDropdown.Item href="/my-applications">Moje aktivne prijave</NavDropdown.Item>
                                     }
                                 </NavDropdown>
                                 <NavDropdown title="Institucije" id="basic-nav-dropdown">
