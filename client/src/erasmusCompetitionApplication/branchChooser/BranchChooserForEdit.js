@@ -4,14 +4,20 @@ import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Button, Table } from 'react-bootstrap';
 
-export function BranchChooser({ onSubmit, onUserChoice, choice, title, branches }) {
+export function BranchChooserForEdit({ onSubmit, onUserChoice, choice, choices, title, branches }) {
+  const firstChoice = choices; 
   const [selectedBranch, setSelectedBranch] = useState(choice);
+
   const handleRowClick = (branch) => {
-    setSelectedBranch(selectedBranch === branch ? null : branch);
+    setSelectedBranch(selectedBranch?._id === branch._id ? null : branch);
   };
 
   const handleSubmit = () => {
-    onUserChoice(selectedBranch);
+    if (selectedBranch == null) {
+      onUserChoice(firstChoice?.branch); 
+    } else {
+      onUserChoice(selectedBranch);
+    }
     onSubmit();
   };
 
@@ -34,7 +40,6 @@ export function BranchChooser({ onSubmit, onUserChoice, choice, title, branches 
                     <strong>{group.institution.name}</strong>
                   </td>
                 </tr>
-
                 {group.branches.map((branch) => (
                   <tr
                     key={branch._id}
@@ -42,8 +47,32 @@ export function BranchChooser({ onSubmit, onUserChoice, choice, title, branches 
                     className={selectedBranch?._id === branch._id ? 'table-success' : ''}
                     style={{ cursor: 'pointer' }}
                   >
-                    <td>{branch.name}</td>
-                    <td>
+                    <td
+                      style={{
+                        backgroundColor:
+                          selectedBranch?._id === branch._id
+                            ? 'lightgreen' 
+                            : firstChoice?.branch._id === branch._id && selectedBranch === null
+                              ? 'lightyellow' 
+                              : 'inherit', 
+                        padding: '10px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {branch.name}
+                    </td>
+                    <td
+                      style={{
+                        backgroundColor:
+                          selectedBranch?._id === branch._id
+                            ? 'lightgreen'
+                            : firstChoice?.branch._id === branch._id && selectedBranch === null
+                              ? 'lightyellow'
+                              : 'inherit',
+                        padding: '10px',
+                        borderRadius: '4px',
+                      }}
+                    >
                       {branch.city}, {branch.country}
                     </td>
                   </tr>
@@ -52,7 +81,7 @@ export function BranchChooser({ onSubmit, onUserChoice, choice, title, branches 
             ))}
         </tbody>
       </Table>
-      <Button variant="primary" type="button" disabled={!selectedBranch} onClick={handleSubmit}>
+      <Button variant="primary" type="button" onClick={handleSubmit}>
         Dalje
       </Button>
     </>

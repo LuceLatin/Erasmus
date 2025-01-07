@@ -6,10 +6,11 @@ import { connectDB } from '../dbInstance.js';
 import { checkAuthorization, validateToken } from '../jwt.js';
 import { ApplicantChoices } from '../models/ErasmusCompetition/ApplicantChoices.js';
 import { ErasmusApplication } from '../models/ErasmusCompetition/Application.js';
-import { uploadFileToGridFS } from '../services/fsgrid.js';
+import { uploadFileToGridFS, getFile } from '../services/fsgrid.js';
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
+import { ObjectId } from 'mongodb';
 
 export const erasmusApplicationRouter = express.Router();
 
@@ -88,41 +89,188 @@ erasmusApplicationRouter.post(
   },
 );
 
-erasmusApplicationRouter.get('/api/:competitionId/applications', checkAuthorization, async (req, res) => {
-  const { competitionId } = req.params;
-
+erasmusApplicationRouter.get('/api/:competitionId/applications/edit/:applicationId', async (req, res) => {
   try {
-    const applications = await ErasmusApplication.find({ erasmusCompetition: competitionId })
-      .populate('user', 'username email')
-      .exec();
+    const { bucket } = await connectDB();
+    if (!bucket) {
+      console.error('Bucket is not initialized.');
+      return res.status(500).send('GridFS bucket is not available');
+    }
 
-    res.status(200).json(applications);
-  } catch (error) {
-    console.error('Error fetching applications:', error);
-    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijava.' });
-  }
-});
+    const applicationId = req.params.applicationId;
 
-erasmusApplicationRouter.get('/api/:competitionId/applications/:applicationId', async (req, res) => {
-  const { competitionId, applicationId } = req.params;
+    const objectId = mongoose.Types.ObjectId.isValid(applicationId) ? new mongoose.Types.ObjectId(applicationId) : null;
 
-  try {
-    const application = await ErasmusApplication.findOne({
-      _id: applicationId,
-      erasmusCompetition: competitionId,
-    })
-      .populate('user', 'username email')
-      .populate('erasmusCompetition', 'title')
+    if (!objectId) {
+      console.error('Invalid Application ID');
+      return res.status(400).send('Invalid Application ID');
+    }
+
+    const application = await ErasmusApplication.findById(objectId)
+      .populate('user')
+      .populate('erasmusCompetition')
       .exec();
 
     if (!application) {
-      return res.status(404).json({ error: 'Prijava nije pronađena.' });
+      console.error(`Application not found with ID: ${applicationId}`);
+      return res.status(404).send('Application not found.');
     }
 
-    res.status(200).json(application);
+    const choices = await ApplicantChoices.find({ application: applicationId }).populate('branch').exec();
+
+    const fileIds = application.files;
+
+    if (!fileIds || fileIds.length === 0) {
+      console.error('No files found.');
+      return res.status(404).send('No files found.');
+    }
+
+    const fileDetailsArray = [];
+
+    for (const fileId of fileIds) {
+      const fileDetails = await getFile(fileId, bucket);
+
+      if (fileDetails) {
+        fileDetailsArray.push({
+          filename: fileDetails.filename,
+          mimetype: fileDetails.mimetype,
+          size: fileDetails.size,
+          uploadDate: fileDetails.uploadDate,
+        });
+      } else {
+        console.error(`File with ID ${fileId} could not be fetched.`);
+      }
+    }
+
+    if (fileDetailsArray.length === 0) {
+      return res.status(404).send('No valid files found in GridFS.');
+    }
+
+    const response = {
+      application,
+      choices,
+      files: fileDetailsArray,
+    };
+
+    return res.status(200).json(response);
   } catch (error) {
-    console.error('Error fetching application:', error);
-    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijave.' });
+    console.error('Pogreška:', error);
+    res.status(500).send('Došlo je do pogreške prilikom dohvaćanja aplikacije');
+  }
+});
+
+erasmusApplicationRouter.put('/api/erasmus-application/edit', async (req, res) => {
+  const { competitionData, branches, userChoice, files, applicationId } = req.body;
+
+  console.log('Primljeni podaci:');
+  console.log('Podaci o natječaju:', competitionData);
+  console.log('Odabrane grane:', branches);
+  console.log('Odabir korisnika:', userChoice);
+  console.log('Nove Datoteke:', files);
+  console.log('applicationId ', applicationId);
+
+  try {
+    if (userChoice.firstBranch != null) {
+      const firstBranchResult = await ApplicantChoices.updateOne(
+        { application: applicationId, choice: 'first' },
+        {
+          $set: {
+            branch: userChoice.firstBranch?._id || null,
+            updatedAt: new Date(),
+          },
+        },
+        { upsert: true },
+      );
+
+      if (firstBranchResult.matchedCount > 0) {
+        console.log('Ažuriran redak za firstBranch:', firstBranchResult);
+      } else if (firstBranchResult.upsertedCount > 0) {
+        console.log('Dodana nova grana za firstBranch:', firstBranchResult.upsertedId);
+      } else {
+        console.log('Nijedan redak nije pronađen za ažuriranje za firstBranch.');
+      }
+    }
+
+    if (userChoice.secondBranch != null) {
+      const secondBranchResult = await ApplicantChoices.updateOne(
+        { application: applicationId, choice: 'second' },
+        {
+          $set: {
+            branch: userChoice.secondBranch?._id || null,
+            updatedAt: new Date(),
+          },
+        },
+        { upsert: true },
+      );
+
+      if (secondBranchResult.matchedCount > 0) {
+        console.log('Ažuriran redak za secondBranch:', secondBranchResult);
+      } else if (secondBranchResult.upsertedCount > 0) {
+        console.log('Dodana nova grana za secondBranch:', secondBranchResult.upsertedId);
+      } else {
+        console.log('Nijedan redak nije pronađen za ažuriranje za secondBranch.');
+      }
+    }
+
+    if (userChoice.thirdBranch != null) {
+      const thirdBranchResult = await ApplicantChoices.updateOne(
+        { application: applicationId, choice: 'third' },
+        {
+          $set: {
+            branch: userChoice.thirdBranch?._id || null,
+            updatedAt: new Date(),
+          },
+        },
+        { upsert: true },
+      );
+
+      if (thirdBranchResult.matchedCount > 0) {
+        console.log('Ažuriran redak za thirdBranch:', thirdBranchResult);
+      } else if (thirdBranchResult.upsertedCount > 0) {
+        console.log('Dodana nova grana za thirdBranch:', thirdBranchResult.upsertedId);
+      } else {
+        console.log('Nijedan redak nije pronađen za ažuriranje za thirdBranch.');
+      }
+    }
+    const fileKeys = ['cv', 'motivationalLetter', 'schoolGrades'];
+    console.log('Files.cv: ', files.cv);
+
+    let erasmusApplication = null;
+    if (files.cv != null || files.motivationalLetter != null || files.schoolGrades != null) {
+      erasmusApplication = await ErasmusApplication.findById(applicationId);
+    }
+
+    if (erasmusApplication) {
+      for (const key of fileKeys) {
+        if (files[key] != null) {
+          erasmusApplication.files[key] = files[key]._id;
+          console.log(`Ažurirana datoteka za ${key}:`, files[key]._id);
+        }
+      }
+    }
+    /*   // Spremi ažuriranu aplikaciju
+  await erasmusApplication.save();
+} else {
+  console.log('Aplikacija nije pronađena za ažuriranje.');
+} */
+    /* if (files.cv != null){
+      const erasmusApplication = await ErasmusApplication.findById(applicationId);
+    }
+    if (files.motivationalLetter != null){
+      
+    }
+    if (files.schoolGrades != null){
+      
+    }*/
+    // Ažuriranje datoteka (pretpostavka da se file upload rješava kroz GridFS)
+    // const application = await ErasmusApplication.findById(applicationId);
+    // application.files = files.map((file) => file._id); // ažuriraj file ID-eve
+    // await application.save();
+
+    res.status(200).json({ message: 'Application updated successfully' });
+  } catch (error) {
+    console.error('Error updating application:', error);
+    res.status(500).json({ message: 'Failed to update application' });
   }
 });
 
@@ -195,5 +343,38 @@ erasmusApplicationRouter.delete('/api/applications-delete/:id', async (req, res)
   } catch (error) {
     console.error('Error deleting application and related data:', error);
     res.status(500).json({ message: 'Failed to delete application and related data' });
+  }
+});
+
+erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
+  const { bucket } = await connectDB();
+
+  if (!bucket) {
+    return res.status(500).send('GridFS bucket is not initialized');
+  }
+
+  const fileId = req.params.id;
+
+  try {
+    const objectId = new ObjectId(fileId);
+
+    const fileRecord = await getFile(objectId, bucket);
+    if (!fileRecord) {
+      return res.status(404).send('File not found');
+    }
+
+    bucket
+      .openDownloadStream(objectId)
+      .pipe(res)
+      .on('error', (err) => {
+        console.error(err);
+        res.status(500).send('Error downloading file');
+      })
+      .on('finish', () => {
+        console.log('Download complete');
+      });
+  } catch (error) {
+    console.error('Error in download route:', error);
+    res.status(500).send('An error occurred');
   }
 });

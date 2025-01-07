@@ -1,0 +1,59 @@
+
+h2 {
+  font-size: 18px;
+  color: #333;
+  border-bottom: 2px solid #007bff;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+}
+
+.file-section {
+  margin-bottom: 30px;
+}
+
+input[type='file'] {
+  display: block;
+  margin: 10px 0;
+  padding: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 100%;
+  max-width: 100%;
+  cursor: pointer;
+}
+
+button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+  display: block;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.selected-file {
+  background-color: #e9f7fe;
+  padding: 10px;
+  border: 1px solid #007bff;
+  border-radius: 5px;
+  margin: 10px 0;
+}
+
+.no-files {
+  font-style: italic;
+  color: #666;
+  margin: 10px 0;
+}

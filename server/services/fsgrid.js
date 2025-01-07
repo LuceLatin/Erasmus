@@ -43,3 +43,17 @@ export const getFileFromGridFS = async (fileId, gfs) => {
     });
   });
 };
+
+export const getFile = async (fileId, bucket) => {
+  try {
+    if (!bucket) {
+      throw new Error('GridFS bucket is not initialized');
+    }
+
+    const fileRecord = await bucket.find({ _id: fileId }).toArray();
+    return fileRecord[0];
+  } catch (error) {
+    console.error('Error getting file record from GridFS:', error);
+    throw error;
+  }
+};
