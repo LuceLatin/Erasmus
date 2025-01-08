@@ -52,7 +52,8 @@ export function Header() {
                                     <NavDropdown.Item href="/institutions/add">Dodaj instituciju</NavDropdown.Item>
                                     <NavDropdown.Item href="/categories/">Sve kategorije</NavDropdown.Item>
                                 </NavDropdown>
-                            </>
+                                <Nav.Link href="/results">Rezultati</Nav.Link>
+                                </>
                         )}
                     </Nav>
                     <Nav className="ms-auto">

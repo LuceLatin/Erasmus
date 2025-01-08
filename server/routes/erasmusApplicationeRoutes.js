@@ -529,3 +529,33 @@ erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
     res.status(500).send('An error occurred');
   }
 });
+
+erasmusApplicationRouter.put('/api/:applicationId/update-status', async (req, res) => {
+  const { applicationId } = req.params;
+  const { status } = req.body;
+
+  const validStatuses = ['pending', 'approved', 'rejected'];
+  if (!validStatuses.includes(status)) {
+      return res.status(400).json({ error: 'Invalid status provided' });
+  }
+
+  try {
+      const updatedApplication = await ErasmusApplication.findByIdAndUpdate(
+          applicationId,
+          { status },
+          { new: true } 
+      );
+
+      if (!updatedApplication) {
+          return res.status(404).json({ error: 'Application not found' });
+      }
+
+      res.status(200).json({
+          message: 'Status successfully updated',
+          application: updatedApplication,
+      });
+  } catch (err) {
+      console.error('Error updating application status:', err);
+      res.status(500).json({ error: 'Internal server error' });
+  }
+});
