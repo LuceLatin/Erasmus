@@ -51,7 +51,11 @@ export const getFile = async (fileId, bucket) => {
     }
 
     const fileRecord = await bucket.find({ _id: fileId }).toArray();
-    return fileRecord[0];
+    // return fileRecord[0];
+    return {
+      id: fileRecord[0]._id, // ID datoteke
+      metadata: fileRecord[0] // Ostali podaci o datoteci
+    };
   } catch (error) {
     console.error('Error getting file record from GridFS:', error);
     throw error;

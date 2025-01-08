@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from 'react-bootstrap';
 
 import './FileUploadsForEdit.css';
 
-export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFilesChange, onSubmit, onFileUpload2 }) {
+export default function FileUploadsForEdit({
+  userRole,
+  files,
+  onFileUpload,
+  onFilesChange,
+  onSubmit,
+  onFileUpload2,
+  fileDetails,
+}) {
   const [selectedFiles, setSelectedFiles] = useState({
     cv: null,
     motivationalLetter: null,
@@ -12,7 +20,7 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
 
   const onFileDownload = async (fileId) => {
     try {
-      const response = await fetch(`/api/download/${fileId}`, { method: 'GET' });
+      const response = await fetch(`/api/edit-download/${fileId}`, { method: 'GET' });
 
       if (!response.ok) throw new Error('Error downloading file');
 
@@ -58,15 +66,12 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
     }
   };
 
-
-  
   const onFileSelect = (e, type) => {
     const file = e.target.files[0];
     setSelectedFiles((prevFiles) => ({
       ...prevFiles,
       [type]: file,
     }));
-
   };
 
   const handleFileChange = (e, fileType) => {
@@ -77,7 +82,6 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
       }));
     }
   };
-
 
   return (
     <div>
@@ -93,7 +97,7 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
           {files[0] && (
             <>
               <p>The currently added CV is: {files[0].filename}</p>
-              <button onClick={() => onFileDownload(files[0]._id)}>Download {files[0].filename}</button>
+              <button onClick={() => onFileDownload(fileDetails[0].id)}>Download {fileDetails[0].filename}</button>
               <br />
             </>
           )}
@@ -124,7 +128,8 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
             {files[1] && (
               <>
                 <p>The currently added motivational letter is: {files[1].filename}</p>
-                <button onClick={() => onFileDownload(files[1]._id)}>Download {files[1].filename}</button>
+
+                <button onClick={() => onFileDownload(fileDetails[1].id)}>Download {fileDetails[1].filename}</button>
                 <br />
               </>
             )}
@@ -171,7 +176,9 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
                 {files[2] && (
                   <>
                     <p>The currently added school grades is: {files[2].filename}</p>
-                    <button onClick={() => onFileDownload(files[2]._id)}>Download {files[2].filename}</button>
+                    <button onClick={() => onFileDownload(fileDetails[2].id)}>
+                      Download {fileDetails[2].filename}
+                    </button>
                     <br />
                   </>
                 )}
@@ -185,14 +192,13 @@ export default function FileUploadsForEdit({ userRole, files, onFileUpload, onFi
                     </button>
                   </div>
                 )}
-                
               </div>
             ) : (
               <p className="no-files">No School Grades uploaded yet.</p>
             )}
             <button onClick={() => onFileUploadHandler(selectedFiles.schoolGrades, 'schoolGrades')}>
-                  Upload school grades
-                </button>
+              Upload school grades
+            </button>
           </div>
         </>
       )}

@@ -89,6 +89,21 @@ erasmusApplicationRouter.post(
   },
 );
 
+erasmusApplicationRouter.get('/api/:competitionId/applications', checkAuthorization, async (req, res) => {
+  const { competitionId } = req.params;
+
+  try {
+    const applications = await ErasmusApplication.find({ erasmusCompetition: competitionId })
+      .populate('user', 'username email')
+      .exec();
+
+    res.status(200).json(applications);
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+    res.status(500).json({ error: 'Došlo je do greške prilikom dohvaćanja prijava.' });
+  }
+});
+
 erasmusApplicationRouter.get('/api/:competitionId/applications/edit/:applicationId', async (req, res) => {
   try {
     const { bucket } = await connectDB();
@@ -128,20 +143,21 @@ erasmusApplicationRouter.get('/api/:competitionId/applications/edit/:application
     const fileDetailsArray = [];
 
     for (const fileId of fileIds) {
-      const fileDetails = await getFile(fileId, bucket);
+      const { id, metadata } = await getFile(fileId, bucket);
 
-      if (fileDetails) {
+      if (metadata) {
         fileDetailsArray.push({
-          filename: fileDetails.filename,
-          mimetype: fileDetails.mimetype,
-          size: fileDetails.size,
-          uploadDate: fileDetails.uploadDate,
+          id: id,
+          filename: metadata.filename,
+          mimetype: metadata.mimetype,
+          size: metadata.size,
+          uploadDate: metadata.uploadDate,
         });
       } else {
         console.error(`File with ID ${fileId} could not be fetched.`);
       }
     }
-
+    console.log('File details: ', fileDetailsArray);
     if (fileDetailsArray.length === 0) {
       return res.status(404).send('No valid files found in GridFS.');
     }
@@ -166,6 +182,34 @@ const getFileDetails = async (fileIds, bucket) => {
     filename: file.filename,
   }));
 };
+
+erasmusApplicationRouter.get('/api/:competitionId/applications/:applicationId', async (req, res) => {
+  try {
+    const { competitionId, applicationId } = req.params;
+
+    const application = await ErasmusApplication.findOne({
+      _id: applicationId,
+      erasmusCompetition: competitionId,
+    })
+      .populate('user', 'username email firstName lastName')
+      .populate('erasmusCompetition', 'title')
+      .exec();
+
+    if (!application) {
+      return res.status(404).json({ error: 'Prijava nije pronađena.' });
+    }
+    const { bucket } = await connectDB();
+    const files = application.files ? await getFileDetails(application.files, bucket) : [];
+
+    res.json({
+      ...application.toObject(),
+      files, //return details
+    });
+  } catch (error) {
+    console.error('Error fetching application details:', error);
+    res.status(500).send('Failed to fetch application details');
+  }
+});
 
 erasmusApplicationRouter.put('/api/erasmus-application/edit', async (req, res) => {
   const { competitionData, branches, userChoice, files, applicationId } = req.body;
@@ -390,7 +434,7 @@ erasmusApplicationRouter.get('/api/past-applications', async (req, res) => {
 });
 
 //get and download file
-erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
+erasmusApplicationRouter.get('/api/edit-download/:id', async (req, res) => {
   const { bucket } = await connectDB();
 
   if (!bucket) {
@@ -468,16 +512,13 @@ erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
   try {
     const objectId = new ObjectId(fileId);
 
-    const fileRecord = await getFile(objectId, bucket);
-    if (!fileRecord) {
-      return res.status(404).send('File not found');
-    }
+    const downloadStream = bucket.openDownloadStream(objectId);
 
-    bucket
-      .openDownloadStream(objectId)
+    //if the file exists
+    downloadStream
       .pipe(res)
       .on('error', (err) => {
-        console.error(err);
+        console.error('Error downloading file:', err);
         res.status(500).send('Error downloading file');
       })
       .on('finish', () => {

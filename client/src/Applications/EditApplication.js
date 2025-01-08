@@ -68,7 +68,6 @@ export function EditApplication() {
     }
   }, [currentStep, filteredBranches]);
 
-
   const { response: applicationResponse, loading: appLoading } = useFetcher({
     endpoint: `/api/${competitionId}/applications/edit/${applicationId}`,
   });
@@ -78,7 +77,6 @@ export function EditApplication() {
 
   useEffect(() => {
     if (applicationResponse) {
-
       if (applicationResponse.files) {
         const fileNamesArray = applicationResponse.files.map((file) => ({
           filename: file.filename,
@@ -113,6 +111,8 @@ export function EditApplication() {
             existingFiles={filenames}
             onFilesChange={handleFilesChange}
             onFileUpload2={setFiles}
+            fileDetails={applicationResponse.files}
+
           />
         );
       case 3:
@@ -156,7 +156,7 @@ export function EditApplication() {
             files={files}
             branches={branches}
             oldFiles={filenames}
-            applicationId = {applicationId}
+            applicationId={applicationId}
           />
         );
       default:
@@ -171,7 +171,6 @@ export function EditApplication() {
       </h1>
       {error && <p className="text-danger">{error}</p>}
       <RenderStep />
-      
     </div>
   );
 }
