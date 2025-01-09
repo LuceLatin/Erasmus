@@ -118,7 +118,7 @@ const ApplicationDetails = () => {
 
   return (
     <div className="application-details-container mt-3">
-      <h1 className="application-title">Details for Application</h1>
+      <h1 className="application-title">Detalji o prijavi</h1>
       <div className="application-description">
         {userRole !== 'koordinator' && (
           <p>
@@ -129,12 +129,12 @@ const ApplicationDetails = () => {
           {userRole === 'koordinator' && (
             <p>
               <label htmlFor="status-select">
-                <strong>Status:</strong>
+                <strong>Status: </strong>
               </label>
               <select id="status-select" value={selectedStatus} onChange={(e) => updateStatus(e.target.value)}>
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
-                    {status}
+                     {status}
                   </option>
                 ))}
               </select>
@@ -142,20 +142,20 @@ const ApplicationDetails = () => {
           )}
         </div>
         <p>
-          <strong>Application Date:</strong> {new Date(application.applicationDate).toLocaleDateString()}
+          <strong>Datum:</strong> {new Date(application.applicationDate).toLocaleDateString()}
         </p>
         <p>
-          <strong>User:</strong> {application.user?.username} ({application.user?.email})
+          <strong>Korisničko ime:</strong> {application.user?.username} ({application.user?.email})
         </p>
         <p>
-          <strong>Username:</strong> {`${application.user.firstName} ${application.user.lastName}`}
+          <strong>Korisnik:</strong> {`${application.user.firstName} ${application.user.lastName}`}
         </p>
         <p>
-          <strong>Erasmus Competition:</strong> {application.erasmusCompetition.title}
+          <strong>Natječaj:</strong> {application.erasmusCompetition.title}
         </p>
 
         <p>
-          <strong>Files:</strong>
+          <strong>Dokumenti:</strong>
         </p>
         <ul>
           <ul className="file-list">
@@ -172,7 +172,7 @@ const ApplicationDetails = () => {
         </ul>
 
         <p>
-          <strong>Choices:</strong>
+          <strong>Izbori:</strong>
         </p>
         {choices.length > 0 ? (
           <ul>
