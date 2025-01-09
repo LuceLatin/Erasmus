@@ -12,6 +12,7 @@ const ApplicationDetails = () => {
   const { competitionId, id: applicationId } = useParams();
   const [statusOptions] = useState(['pending', 'approved', 'rejected']);
   const [selectedStatus, setSelectedStatus] = useState(null);
+  const [statusOptionsForChoices] = useState(['pending', 'approved', 'rejected']);
 
   useEffect(() => {
     const token = document.cookie.split('access-token=')[1]?.split(';')[0];
@@ -45,6 +46,7 @@ const ApplicationDetails = () => {
         setApplication(data);
         setFiles(data.files || []);
         setSelectedStatus(data.status);
+        setChoices(data.choices);
       } catch (err) {
         setError('Failed to fetch application details');
       }
@@ -71,6 +73,34 @@ const ApplicationDetails = () => {
       }
 
       setSelectedStatus(newStatus);
+      alert('Status successfully updated');
+    } catch (err) {
+      console.error('Failed to update status:', err);
+      setError('Failed to update status');
+    }
+  };
+
+  const handleStatusChange = async (newStatus, choiceId) => {
+    try {
+      const response = await fetch(`/api/${choiceId}/update-choices-status`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ status: newStatus }),
+      });
+
+      const data = await response.json();
+      if (data.error) {
+        setError(data.error);
+        return;
+      }
+
+      setChoices((prevChoices) =>
+        prevChoices.map((choice) => (choice._id === choiceId ? { ...choice, status: newStatus } : choice)),
+      );
+
       alert('Status successfully updated');
     } catch (err) {
       console.error('Failed to update status:', err);
@@ -134,7 +164,7 @@ const ApplicationDetails = () => {
               <select id="status-select" value={selectedStatus} onChange={(e) => updateStatus(e.target.value)}>
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
-                     {status}
+                    {status}
                   </option>
                 ))}
               </select>
@@ -153,7 +183,6 @@ const ApplicationDetails = () => {
         <p>
           <strong>Natječaj:</strong> {application.erasmusCompetition.title}
         </p>
-
         <p>
           <strong>Dokumenti:</strong>
         </p>
@@ -170,14 +199,27 @@ const ApplicationDetails = () => {
             )}
           </ul>
         </ul>
-
         <p>
           <strong>Izbori:</strong>
         </p>
-        {choices.length > 0 ? (
+        {choices !== null && choices.length > 0 ? (
           <ul>
             {choices.map((choice, index) => (
-              <li key={index}>{choice.branch.name}</li>
+              <li key={index}>
+                <strong>{choice.choice.charAt(0).toUpperCase() + choice.choice.slice(1)} Choice:</strong>{' '}
+                {choice.branch.name}
+                <br />
+                <em>Address:</em> {choice.branch.address}, {choice.branch.city}, {choice.branch.country}
+                <br />
+                <em>Status:</em>
+                <select value={choice.status} onChange={(e) => handleStatusChange(e.target.value, choice._id)}>
+                  {statusOptionsForChoices.map((status) => (
+                    <option key={status} value={status}>
+                      {status.charAt(0).toUpperCase() + status.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </li>
             ))}
           </ul>
         ) : (

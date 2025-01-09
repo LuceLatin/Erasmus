@@ -157,7 +157,6 @@ erasmusApplicationRouter.get('/api/:competitionId/applications/edit/:application
         console.error(`File with ID ${fileId} could not be fetched.`);
       }
     }
-    console.log('File details: ', fileDetailsArray);
     if (fileDetailsArray.length === 0) {
       return res.status(404).send('No valid files found in GridFS.');
     }
@@ -200,11 +199,14 @@ erasmusApplicationRouter.get('/api/:competitionId/applications/:applicationId', 
     }
     const { bucket } = await connectDB();
     const files = application.files ? await getFileDetails(application.files, bucket) : [];
-
-    res.json({
+    const choices = await ApplicantChoices.find({ application: applicationId }).populate('branch').exec();
+    const response = {
       ...application.toObject(),
       files, //return details
-    });
+      choices,
+    };
+    return res.status(200).json(response);
+
   } catch (error) {
     console.error('Error fetching application details:', error);
     res.status(500).send('Failed to fetch application details');
@@ -285,7 +287,6 @@ erasmusApplicationRouter.put('/api/erasmus-application/edit', async (req, res) =
       }
     }
     const fileKeys = ['cv', 'motivationalLetter', 'schoolGrades'];
-    console.log('Files.cv: ', files.cv);
 
     let erasmusApplication = null;
     if (files.cv != null || files.motivationalLetter != null || files.schoolGrades != null) {
@@ -536,26 +537,48 @@ erasmusApplicationRouter.put('/api/:applicationId/update-status', async (req, re
 
   const validStatuses = ['pending', 'approved', 'rejected'];
   if (!validStatuses.includes(status)) {
-      return res.status(400).json({ error: 'Invalid status provided' });
+    return res.status(400).json({ error: 'Invalid status provided' });
   }
 
   try {
-      const updatedApplication = await ErasmusApplication.findByIdAndUpdate(
-          applicationId,
-          { status },
-          { new: true } 
-      );
+    const updatedApplication = await ErasmusApplication.findByIdAndUpdate(applicationId, { status }, { new: true });
 
-      if (!updatedApplication) {
-          return res.status(404).json({ error: 'Application not found' });
-      }
+    if (!updatedApplication) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
 
-      res.status(200).json({
-          message: 'Status successfully updated',
-          application: updatedApplication,
-      });
+    res.status(200).json({
+      message: 'Status successfully updated',
+      application: updatedApplication,
+    });
   } catch (err) {
-      console.error('Error updating application status:', err);
-      res.status(500).json({ error: 'Internal server error' });
+    console.error('Error updating application status:', err);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+erasmusApplicationRouter.put('/api/:choiceId/update-choices-status', async (req, res) => {
+  const { choiceId } = req.params;
+  const { status } = req.body;
+
+  const validStatuses = ['pending', 'approved', 'rejected'];
+  if (!validStatuses.includes(status)) {
+    return res.status(400).json({ error: 'Invalid status provided' });
+  }
+
+  try {
+    const updatedApplication = await ApplicantChoices.findByIdAndUpdate(choiceId, { status }, { new: true });
+
+    if (!updatedApplication) {
+      return res.status(404).json({ error: 'Application not found' });
+    }
+
+    res.status(200).json({
+      message: 'Status successfully updated',
+      application: updatedApplication,
+    });
+  } catch (err) {
+    console.error('Error updating application status:', err);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
