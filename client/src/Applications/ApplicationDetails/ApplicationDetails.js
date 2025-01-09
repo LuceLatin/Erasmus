@@ -44,7 +44,7 @@ const ApplicationDetails = () => {
 
         setApplication(data);
         setFiles(data.files || []);
-        setSelectedStatus(data.status); // Postavite trenutni status
+        setSelectedStatus(data.status);
       } catch (err) {
         setError('Failed to fetch application details');
       }
@@ -70,7 +70,7 @@ const ApplicationDetails = () => {
         return;
       }
 
-      setSelectedStatus(newStatus); // Ažurirajte lokalni status
+      setSelectedStatus(newStatus);
       alert('Status successfully updated');
     } catch (err) {
       console.error('Failed to update status:', err);
