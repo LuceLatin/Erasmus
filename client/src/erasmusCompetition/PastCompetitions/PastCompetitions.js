@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
+import { Table } from 'react-bootstrap';
 import './PastCompetitions.css';
 
 const PastCompetitions = () => {
@@ -93,16 +94,31 @@ const PastCompetitions = () => {
                         }
                     </p>
                 ) : (
-                    filteredCompetitions.map((competition) => (
-                        <div
-                            key={competition._id}
-                            className="past-competition-item"
-                            onClick={() => handleCompetitionClick(competition._id)}
-                        >
-                            <h4 className="past-competition-title">{competition.title}</h4>
-                        </div>
-                    ))
-                )}
+                    <Table striped bordered hover responsive>
+                    <thead>
+                        <tr>
+                            <th>Natječaj</th>
+                            <th>Vrsta korisnika</th>
+                            <th>Vrsta institucije</th>
+                            <th>Datum početka</th>
+                            <th>Datum završetka</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredCompetitions.map((competition) => (
+                            <tr key={competition._id} onClick={() => handleCompetitionClick(competition._id)} style={{ cursor: 'pointer' }}>
+                                <td>{competition.title}</td>
+                                <td>{competition.role}</td>
+                                <td>{competition.institutionType}</td>
+                                <td>{new Date(competition.startDate).toLocaleDateString()}</td>
+                                <td>{new Date(competition.endDate).toLocaleDateString()}</td>
+                               
+                            </tr>
+                        ))}
+                    </tbody>
+                </Table>
+
+            )}
             </div>
         </div>
     );
