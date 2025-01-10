@@ -5,16 +5,21 @@ import { ErasmusCompetition } from '../models/ErasmusCompetition/ErasmusCompetit
 
 const erasmusCompetitionRouter = express.Router();
 
-erasmusCompetitionRouter.post('/api/competitions', checkAuthorization, async (req, res) => {
-  try {
-    const newCompetition = new ErasmusCompetition(req.body);
-    await newCompetition.save();
-    res.status(201).json(newCompetition);
-  } catch (error) {
-    console.error('Error creating competition:', error);
-    res.status(500).json({ error: 'Failed to create competition' });
-  }
-});
+erasmusCompetitionRouter.post(
+  '/api/competitions',
+  checkAuthorization,
+  checkAuthorization2('koordinator'),
+  async (req, res) => {
+    try {
+      const newCompetition = new ErasmusCompetition(req.body);
+      await newCompetition.save();
+      res.status(201).json(newCompetition);
+    } catch (error) {
+      console.error('Error creating competition:', error);
+      res.status(500).json({ error: 'Failed to create competition' });
+    }
+  },
+);
 
 erasmusCompetitionRouter.get(
   '/api/competitions',
@@ -40,7 +45,7 @@ erasmusCompetitionRouter.get(
       if (!competition) {
         return res.status(404).json({ error: 'Competition not found' });
       }
-      console.log(competition)
+      console.log(competition);
       res.status(200).json(competition);
     } catch (error) {
       console.error('Error fetching competition:', error);
@@ -49,33 +54,43 @@ erasmusCompetitionRouter.get(
   },
 );
 
-erasmusCompetitionRouter.put('/api/competitions/:id', checkAuthorization, async (req, res) => {
-  try {
-    const updatedCompetition = await ErasmusCompetition.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true,
-    });
-    if (!updatedCompetition) {
-      return res.status(404).json({ error: 'Competition not found' });
+erasmusCompetitionRouter.put(
+  '/api/competitions/:id',
+  checkAuthorization,
+  checkAuthorization2('koordinator'),
+  async (req, res) => {
+    try {
+      const updatedCompetition = await ErasmusCompetition.findByIdAndUpdate(req.params.id, req.body, {
+        new: true,
+        runValidators: true,
+      });
+      if (!updatedCompetition) {
+        return res.status(404).json({ error: 'Competition not found' });
+      }
+      res.status(200).json(updatedCompetition);
+    } catch (error) {
+      console.error('Error updating competition:', error);
+      res.status(500).json({ error: 'Failed to update competition' });
     }
-    res.status(200).json(updatedCompetition);
-  } catch (error) {
-    console.error('Error updating competition:', error);
-    res.status(500).json({ error: 'Failed to update competition' });
-  }
-});
+  },
+);
 
-erasmusCompetitionRouter.delete('/api/competitions/:id', checkAuthorization, async (req, res) => {
-  try {
-    const deletedCompetition = await ErasmusCompetition.findByIdAndDelete(req.params.id);
-    if (!deletedCompetition) {
-      return res.status(404).json({ error: 'Competition not found' });
+erasmusCompetitionRouter.delete(
+  '/api/competitions/:id',
+  checkAuthorization,
+  checkAuthorization2('koordinator'),
+  async (req, res) => {
+    try {
+      const deletedCompetition = await ErasmusCompetition.findByIdAndDelete(req.params.id);
+      if (!deletedCompetition) {
+        return res.status(404).json({ error: 'Competition not found' });
+      }
+      res.status(200).json({ message: 'Competition deleted successfully' });
+    } catch (error) {
+      console.error('Error deleting competition:', error);
+      res.status(500).json({ error: 'Failed to delete competition' });
     }
-    res.status(200).json({ message: 'Competition deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting competition:', error);
-    res.status(500).json({ error: 'Failed to delete competition' });
-  }
-});
+  },
+);
 
 export default erasmusCompetitionRouter;

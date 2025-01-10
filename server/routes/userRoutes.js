@@ -1,13 +1,13 @@
 import bcrypt from 'bcryptjs';
 import express from 'express';
 
-import { checkAuthorization, createTokens, validateToken } from '../jwt.js';
+import { checkAuthorization, checkAuthorization2 } from '../jwt.js';
 import { User } from '../models/User/User.js';
 
 const userRouter = express.Router();
 
 // Get all users
-userRouter.get('/api/users', checkAuthorization, async (req, res) => {
+userRouter.get('/api/users', checkAuthorization, checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const users = await User.find();
     res.status(200).json(users);
@@ -17,7 +17,7 @@ userRouter.get('/api/users', checkAuthorization, async (req, res) => {
   }
 });
 
-userRouter.post('/api/users/add', async (req, res) => {
+userRouter.post('/api/users/add', checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const { email, username } = req.body;
 
@@ -47,7 +47,7 @@ userRouter.post('/api/users/add', async (req, res) => {
 });
 
 // Delete user
-userRouter.delete('/api/users/:id', checkAuthorization, async (req, res) => {
+userRouter.delete('/api/users/:id', checkAuthorization, checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const { id } = req.params;
     const deletedUser = await User.findByIdAndDelete(id);
@@ -64,7 +64,7 @@ userRouter.delete('/api/users/:id', checkAuthorization, async (req, res) => {
 });
 
 // Edit user
-userRouter.put('/api/users/:id', checkAuthorization, async (req, res) => {
+userRouter.put('/api/users/:id', checkAuthorization, checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const { id } = req.params;
     const { email, username, password, ...otherFields } = req.body;

@@ -110,7 +110,7 @@ const CompetitionsList = () => {
                                 <td>{new Date(competition.startDate).toLocaleDateString()}</td>
                                 <td>{new Date(competition.endDate).toLocaleDateString()}</td>
                                 <td>
-                                    {isCoordinator && (
+                                    {isCoordinator ? (
                                         <>
                                             <Button variant="success" onClick={(e) => { e.stopPropagation(); handleEdit(competition._id); }}>
                                                 Edit
@@ -118,7 +118,16 @@ const CompetitionsList = () => {
                                             <Button variant="danger" onClick={(e) => { e.stopPropagation(); handleDelete(competition._id); }} className="ms-2">
                                                 Delete
                                             </Button>
+
                                         </>
+                                    ): (
+                                        <Button variant="info" onClick={
+                                            (e) => {
+                                                e.stopPropagation();
+                                                navigate(`/erasmus-competitions/${competition._id}/apply/`);
+
+                                            }
+                                        }>Prijavi se</Button>
                                     )}
                                 </td>
                             </tr>

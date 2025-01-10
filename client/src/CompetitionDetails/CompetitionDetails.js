@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom'; // Dodan 'Link' za navigaciju
+import {useParams, Link, useNavigate} from 'react-router-dom'; // Dodan 'Link' za navigaciju
 import './CompetitionDetails.css';
 import { jwtDecode } from 'jwt-decode'; 
 import {useGetCurrentUser} from "../hooks/useGetCurrentUser";
+import {Button} from "react-bootstrap";
 
 
 const CompetitionDetails = () => {
@@ -11,22 +12,11 @@ const CompetitionDetails = () => {
     const [userRole, setUserRole] = useState(null);
     const [error, setError] = useState(null);
     const {user} = useGetCurrentUser()
+    const navigate = useNavigate();
     console.log(user)
 
     useEffect(() => {
-        const token = document.cookie.split('access-token=')[1]?.split(';')[0];
-        if (token) {
-            try {
-                const decodedToken = jwtDecode(token);
-                setUserRole(decodedToken.role);
-            } 
-            catch (err) {
-                setError('Invalid token');
-            }
-        }
-        else {
-            setError('No token found');
-        }
+        setUserRole(user?.role)
     }, []);
     
     useEffect(() => {
@@ -65,7 +55,7 @@ const CompetitionDetails = () => {
     return (
         <div className="competition-details-container">
             <h1 className="competition-title">{competition.title}</h1>
-            {user.role == "koordinator" && <p>
+            {user?.role === "koordinator" && <p>
                 <Link to={`/${competition._id}/applications`} style={{ textDecoration: 'none' }}>
                     Idi na prijave
                 </Link>
@@ -74,7 +64,18 @@ const CompetitionDetails = () => {
                 <p><strong>Opis:</strong> {competition.description}</p>
                 <p><strong>Vrsta institucije:</strong> {competition.institutionType}</p>
                 <p><strong>Vrijedi za rolu:</strong> {competition.role}</p>
+                {
+                    user?.role === competition?.role && (
+                        <div className="text-center">
+                            <Button onClick={() => navigate(`/erasmus-competitions/${competition._id}/apply`)}
+                                    variant="primary">
+                                Prijavi se
+                            </Button>
+                        </div>
+                    )
+                }
             </div>
+
 
             <div className="date-section">
                 <div>
