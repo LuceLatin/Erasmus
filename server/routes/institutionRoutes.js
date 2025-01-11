@@ -5,16 +5,21 @@ import { Institution } from '../models/Institution/Institution.js';
 
 const institutionRouter = express.Router();
 
-institutionRouter.post('/api/institutions/add', checkAuthorization, async (req, res) => {
-  try {
-    const newInstitution = new Institution(req.body);
-    await newInstitution.save();
-    res.status(201).json(newInstitution);
-  } catch (error) {
-    console.error('Error creating institution:', error);
-    res.status(500).json({ error: 'Failed to create institution' });
-  }
-});
+institutionRouter.post(
+  '/api/institutions/add',
+  checkAuthorization,
+  checkAuthorization2('koordinator'),
+  async (req, res) => {
+    try {
+      const newInstitution = new Institution(req.body);
+      await newInstitution.save();
+      res.status(201).json(newInstitution);
+    } catch (error) {
+      console.error('Error creating institution:', error);
+      res.status(500).json({ error: 'Failed to create institution' });
+    }
+  },
+);
 
 institutionRouter.get(
   '/api/institutions',

@@ -32,6 +32,7 @@ import EditApplication from './Applications/EditApplication';
 import PastApplications from './Applications/PastApplications';
 import ActiveApplications from './Applications/ActiveApplications'
 import Results from './Results/Results'
+import {CoordinatorRoute} from "./components/authenticatedRoute/coordinatorRoute";
 
 
 function App() {
@@ -40,49 +41,50 @@ function App() {
     if (loading) {
         return <div>Loading...</div>;
     }
-  return (
-      <div className="App d-flex flex-column site-container">
-        <Header />
-        <div>
-          <Container>
-            <Routes>
-            <Route path="/" element={<Homepage />} />
-            <Route element={<AuthenticatedRoute user={user} />}>
-                <Route path="/users" element={<UserList />} />
-                <Route path="/users/add" element={<AddUser />} />
-                <Route path="/users/edit/:id" element={<EditUser />} />
-                <Route path="/categories" element={<CategoryList />} />
-                <Route path="/categories/add" element={<AddUser />} />
-                <Route path="/institutions" element={<InstitutionList />} />
-                <Route path="/institutions/:id" element={<InstitutionDetails />} />
-                <Route path="/institutions/add" element={<AddInstitution />} />
-                <Route path="/institutions/edit/:id" element={<EditInstitution />} />
-                <Route path="/:institutionId/branches/add" element={<AddBranch />} />
-                <Route path="/:institutionId/branches/edit/:id" element={<EditBranch />} />
-                <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
-                <Route path="erasmus-competitions/" element={<CompetitionsList/>} />
-                <Route path="/:competitionId/applications/" element={<ApplicationList/>} />
-                <Route path="/:competitionId/applications/:id" element={<ApplicationDetails />} />
-                <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
-                <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
-                <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
-                <Route path="/erasmus-competitions/:id/apply" element={<ErasmusCompetitionApplication />} />
-                <Route path="/my-applications" element={<MyApplicationList />} />
-                <Route path="/:competitionId/applications/edit/:applicationId" element={<EditApplication />} />   
-                <Route path="/past-applications" element={<PastApplications/>}/>  
-                <Route path="/active-applications" element={<ActiveApplications/>}/>   
-                <Route path="/me" element={ <UserProfile user={user}/> } />
-                <Route path="/results" element={<Results/>} />
-            </Route>
-
-            <Route path="/login" element={<Login />} />
-            <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
-            </Routes>
-          </Container>
+    return (
+        <div className="App d-flex flex-column site-container">
+            <Header />
+            <div>
+                <Container>
+                    <Routes>
+                        <Route path="/" element={<Homepage />} />
+                        <Route element={<AuthenticatedRoute user={user} />}>
+                            <Route element={<CoordinatorRoute user={user} />}>
+                                <Route path="/institutions/add" element={<AddInstitution />} />
+                                <Route path="/users" element={<UserList />} />
+                                <Route path="/users/add" element={<AddUser />} />
+                                <Route path="/users/edit/:id" element={<EditUser />} />
+                                <Route path="/categories/add" element={<AddUser />} />
+                                <Route path="/erasmus-competitions/add" element={<AddErasmusCompetition />} />
+                            </Route>
+                            <Route path="/categories" element={<CategoryList />} />
+                            <Route path="/institutions" element={<InstitutionList />} />
+                            <Route path="/institutions/:id" element={<InstitutionDetails />} />
+                            <Route path="/institutions/edit/:id" element={<EditInstitution />} />
+                            <Route path="/:institutionId/branches/add" element={<AddBranch />} />
+                            <Route path="/:institutionId/branches/edit/:id" element={<EditBranch />} />
+                            <Route path="erasmus-competitions/" element={<CompetitionsList />} />
+                            <Route path="/:competitionId/applications/" element={<ApplicationList />} />
+                            <Route path="/:competitionId/applications/:id" element={<ApplicationDetails />} />
+                            <Route path="/competitions/edit/:id" element={<EditErasmusCompetition />} />
+                            <Route path="/erasmus-competitions/past" element={<PastCompetitions />} />
+                            <Route path="/erasmus-competitions/:id" element={<CompetitionDetails />} />
+                            <Route path="/erasmus-competitions/:id/apply" element={<ErasmusCompetitionApplication />} />
+                            <Route path="/my-applications" element={<MyApplicationList />} />
+                            <Route path="/:competitionId/applications/edit/:applicationId" element={<EditApplication />} />
+                            <Route path="/past-applications" element={<PastApplications />} />
+                            <Route path="/active-applications" element={<ActiveApplications />} />
+                            <Route path="/me" element={<UserProfile user={user} />} />
+                            <Route path="/results" element={<Results />} />
+                        </Route>
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
+                    </Routes>
+                </Container>
+            </div>
+            <Footer />
         </div>
-        <Footer />
-      </div>
-  );
+    );
 }
 
 export default App;

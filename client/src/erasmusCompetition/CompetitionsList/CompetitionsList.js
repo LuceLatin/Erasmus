@@ -10,6 +10,7 @@ const CompetitionsList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [competitionToDelete, setCompetitionToDelete] = useState(null);
     const [error, setError] = useState(null);
+    const user = useGetCurrentUser();
 
     const { isCoordinator, isProfesor, isStudent } = useGetCurrentUser();
     const navigate = useNavigate();
@@ -110,7 +111,7 @@ const CompetitionsList = () => {
                                 <td>{new Date(competition.startDate).toLocaleDateString()}</td>
                                 <td>{new Date(competition.endDate).toLocaleDateString()}</td>
                                 <td>
-                                    {isCoordinator && (
+                                    {isCoordinator ? (
                                         <>
                                             <Button variant="success" onClick={(e) => { e.stopPropagation(); handleEdit(competition._id); }}>
                                                 Edit
@@ -119,6 +120,12 @@ const CompetitionsList = () => {
                                                 Delete
                                             </Button>
                                         </>
+                                    ) : (
+                                        user?.role === competition?.role && (
+                                            <Button variant="info" onClick={(e) => { e.stopPropagation(); navigate(`/erasmus-competitions/${competition._id}/apply/`); }}>
+                                                Prijavi se
+                                            </Button>
+                                        )
                                     )}
                                 </td>
                             </tr>

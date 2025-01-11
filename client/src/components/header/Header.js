@@ -24,14 +24,15 @@ export function Header() {
                         
                         {user && (
                             <>
+                            {user.role === 'koordinator' && (
                                 <NavDropdown title="Korisnici" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="/users">Svi korisnici</NavDropdown.Item>
 
                                     <NavDropdown.Item href="/users/add">Dodaj korisnika</NavDropdown.Item>
-                                </NavDropdown>
+                                </NavDropdown>)}
                                 <NavDropdown title="Natječaji" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="/erasmus-competitions/">Dostupni natječaji</NavDropdown.Item>
-                                    {user.role !== "koordinator" && <NavDropdown.Item href="/erasmus-competitions/add">Dodaj natječaj</NavDropdown.Item>}
+                                    {user.role === "koordinator" && <NavDropdown.Item href="/erasmus-competitions/add">Dodaj natječaj</NavDropdown.Item>}
                                     <NavDropdown.Item href="/erasmus-competitions/past">Prošli natječaji</NavDropdown.Item>
                                     
                                 </NavDropdown>
@@ -49,7 +50,7 @@ export function Header() {
                                 </NavDropdown>
                                 <NavDropdown title="Institucije" id="basic-nav-dropdown">
                                     <NavDropdown.Item href="/institutions/">Sve institucije</NavDropdown.Item>
-                                    <NavDropdown.Item href="/institutions/add">Dodaj instituciju</NavDropdown.Item>
+                                    {user.role === 'koordinator' && <NavDropdown.Item href="/institutions/add">Dodaj instituciju</NavDropdown.Item>}
                                     <NavDropdown.Item href="/categories/">Sve kategorije</NavDropdown.Item>
                                 </NavDropdown>
                                 <Nav.Link href="/results">Rezultati</Nav.Link>
