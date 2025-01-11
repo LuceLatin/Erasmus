@@ -10,6 +10,7 @@ const CompetitionsList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [competitionToDelete, setCompetitionToDelete] = useState(null);
     const [error, setError] = useState(null);
+    const user = useGetCurrentUser();
 
     const { isCoordinator, isProfesor, isStudent } = useGetCurrentUser();
     const navigate = useNavigate();
@@ -118,16 +119,13 @@ const CompetitionsList = () => {
                                             <Button variant="danger" onClick={(e) => { e.stopPropagation(); handleDelete(competition._id); }} className="ms-2">
                                                 Delete
                                             </Button>
-
                                         </>
-                                    ): (
-                                        <Button variant="info" onClick={
-                                            (e) => {
-                                                e.stopPropagation();
-                                                navigate(`/erasmus-competitions/${competition._id}/apply/`);
-
-                                            }
-                                        }>Prijavi se</Button>
+                                    ) : (
+                                        user?.role === competition?.role && (
+                                            <Button variant="info" onClick={(e) => { e.stopPropagation(); navigate(`/erasmus-competitions/${competition._id}/apply/`); }}>
+                                                Prijavi se
+                                            </Button>
+                                        )
                                     )}
                                 </td>
                             </tr>
