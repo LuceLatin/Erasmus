@@ -2,8 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import './ApplicationDetails.css';
+import {useGetCurrentUser} from "../../hooks/useGetCurrentUser";
+
 
 const ApplicationDetails = () => {
+  const { user, loading } = useGetCurrentUser();
   const [application, setApplication] = useState(null);
   const [choices, setChoices] = useState([]);
   const [userRole, setUserRole] = useState(null);
@@ -212,7 +215,7 @@ const ApplicationDetails = () => {
                 <em>Address:</em> {choice.branch.address}, {choice.branch.city}, {choice.branch.country}
                 <br />
                 <em>Status:</em>
-                <select value={choice.status} onChange={(e) => handleStatusChange(e.target.value, choice._id)}>
+                <select disabled={user.role !== "koordinator"} value={choice.status} onChange={(e) => handleStatusChange(e.target.value, choice._id)}>
                   {statusOptionsForChoices.map((status) => (
                     <option key={status} value={status}>
                       {status.charAt(0).toUpperCase() + status.slice(1)}

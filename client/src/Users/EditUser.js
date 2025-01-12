@@ -186,15 +186,7 @@ function EditUser() {
             required
           />
         </Form.Group>
-        <Form.Group controlId="password" className="mb-3">
-          <Form.Label>Lozinka</Form.Label>
-          <Form.Control
-            type="password"
-            name="password"
-            value={userData.password}
-            onChange={handleChange}
-          />
-        </Form.Group>
+        
         <Form.Group controlId="role" className="mb-3">
           <Form.Label>Uloga</Form.Label>
           <Form.Select
