@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import ConfirmationModal from '../components/Modal/modal';
 import AddCategoryModal from './AddCategoryModal'; 
 import EditCategoryModal from './EditCategoryModal';
+import { useGetCurrentUser } from "../hooks/useGetCurrentUser";
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
@@ -15,6 +16,8 @@ const CategoryList = () => {
     const [categoryToEdit, setCategoryToEdit] = useState(null); 
     const navigate = useNavigate();
 
+    
+    const { isCoordinator, isProfesor, isStudent } = useGetCurrentUser();
     useEffect(() => {
         const fetchCategories = async () => {
             try {
@@ -81,10 +84,14 @@ const CategoryList = () => {
     };
 
     return (
+    <div>
+    <h1 className="left-aligned heading">Kategorije</h1>
         <div className="mt-3 mb-3" style={{ maxWidth: '600px' }}>
-            <Button variant="primary" className="mb-3" onClick={() => setShowAddModal(true)}>
-                Dodaj kategoriju
-            </Button>
+            {isCoordinator && (
+                <Button variant="primary" className="mb-3" onClick={() => setShowAddModal(true)}>
+                    Dodaj kategoriju
+                </Button>
+            )}
 
             {categories.length === 0 ? (
                 <Alert variant="info">Nema dostupnih kategorija.</Alert>
@@ -99,19 +106,19 @@ const CategoryList = () => {
                                 <strong>{category.name}</strong>
                             </div>
                             <div>
-                                <Button
+                            {isCoordinator && (  <Button
                                     variant="success"
                                     className="me-2"
                                     onClick={() => handleEdit(category._id)}
                                 >
                                     Edit
-                                </Button>
-                                <Button
+                                </Button>)}
+                                {isCoordinator && (<Button
                                     variant="danger"
                                     onClick={() => handleDelete(category._id)}
                                 >
                                     Delete
-                                </Button>
+                                </Button>)}
                             </div>
                         </ListGroup.Item>
                     ))}
@@ -141,6 +148,7 @@ const CategoryList = () => {
                 categoryId={categoryToEdit?._id}
                 refreshCategories={refreshCategories}
             />
+        </div>
         </div>
     );
 };
