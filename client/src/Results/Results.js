@@ -90,7 +90,7 @@ function Results() {
       </Form.Group>
       <p></p>
 
-      <Table striped bordered hover responsive variant="dark">
+      <Table striped bordered hover responsive >
         <thead>
           <tr>
             <th>Natječaj</th>
