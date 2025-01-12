@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { ListGroup, Alert, Button, Collapse } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useGetCurrentUser } from '../../hooks/useGetCurrentUser';
 import ConfirmationModal from '../../components/Modal/modal';
 import './BranchList.css';
 
@@ -11,6 +12,8 @@ const BranchList = ({ institutionId }) => {
     const [branchToDelete, setBranchToDelete] = useState(null);
     const [open, setOpen] = useState(true); 
     const navigate = useNavigate();
+    
+    const { isCoordinator, isProfesor, isStudent } = useGetCurrentUser();
 
     useEffect(() => {
         const fetchBranches = async () => {
@@ -78,9 +81,9 @@ const BranchList = ({ institutionId }) => {
             
             <Collapse in={open}>
                 <div id="branch-list">
-                    <Button variant="primary" className="mb-2" onClick={() => navigate(`/${institutionId}/branches/add`)}>
+                {isCoordinator && (<Button variant="primary" className="mb-2" onClick={() => navigate(`/${institutionId}/branches/add`)}>
                         Dodaj odjel
-                    </Button>
+                    </Button>)}
                     {branches.length === 0 ? (
                         <Alert variant="info">Nema dostupnih odjela za ovu instituciju.</Alert>
                     ) : (
@@ -91,19 +94,19 @@ const BranchList = ({ institutionId }) => {
                                         <strong>{branch.name}</strong> - {branch.address}, {branch.city}, {branch.country}
                                     </div>
                                     <div>
-                                        <Button
+                                    {isCoordinator && ( <Button
                                             variant="success"
                                             className="me-2"
                                             onClick={() => handleEdit(branch._id)}
                                         >
                                             Edit
-                                        </Button>
-                                        <Button
+                                        </Button>)}
+                                    {isCoordinator && (<Button
                                             variant="danger"
                                             onClick={() => handleShowModal(branch)}
                                         >
                                             Delete
-                                        </Button>
+                                        </Button>)}
                                     </div>
                                 </ListGroup.Item>
                             ))}

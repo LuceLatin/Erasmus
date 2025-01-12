@@ -26,7 +26,7 @@ const CompetitionsList = () => {
                 const isActive = endDate >= today; // Samo aktivni natječaji
 
                 if (isCoordinator) {
-                    return true; // Koordinator vidi sve (aktivne i neaktivne)
+                    return isActive;
                 }
                 if (isProfesor) {
                     return isActive && competition.role === 'profesor';
@@ -99,7 +99,8 @@ const CompetitionsList = () => {
                             <th>Vrsta institucije</th>
                             <th>Datum pocetka</th>
                             <th>Datum zavrsetka</th>
-                            <th>Akcije</th>
+                            {isCoordinator && <th>Akcije</th>}
+
                         </tr>
                     </thead>
                     <tbody>

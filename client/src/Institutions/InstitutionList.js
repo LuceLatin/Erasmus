@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useGetCurrentUser } from "../hooks/useGetCurrentUser";
 import ConfirmationModal from '../components/Modal/modal';
 
 function InstitutionList() {
@@ -9,6 +10,9 @@ function InstitutionList() {
   const [institutionToDelete, setInstitutionToDelete] = useState(null);
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  
+  const { isCoordinator, isProfesor, isStudent } = useGetCurrentUser();
+  
 
   useEffect(() => {
     fetch('/api/institutions')
@@ -56,9 +60,11 @@ function InstitutionList() {
     <div>
       <h1 className="left-aligned heading">Institucije</h1>
       <div className="d-flex justify-content-start mb-3">
-        <Button variant="primary" onClick={() => navigate('/institutions/add')}>
-          Dodaj instituciju
-        </Button>
+        {isCoordinator && (
+          <Button variant="primary" onClick={() => navigate('/institutions/add')}>
+            Dodaj instituciju
+          </Button>
+        )}
       </div>
       <Table striped bordered hover responsive>
         <thead>
@@ -69,7 +75,7 @@ function InstitutionList() {
             <th>Grad</th>
             <th>Država</th>
             <th>Tip</th>
-            <th>Akcije</th>
+            {isCoordinator && <th>Akcije</th>}
           </tr>
         </thead>
         <tbody>
@@ -86,7 +92,7 @@ function InstitutionList() {
               <td>{institution.country}</td>
               <td>{institution.type}</td>
               <td>
-                <Button
+              {isCoordinator && (<Button
                   variant="success"
                   className="me-2"
                   onClick={(e) => {
@@ -95,8 +101,8 @@ function InstitutionList() {
                   }}
                 >
                   Edit
-                </Button>
-                <Button
+                </Button>)}
+                {isCoordinator && ( <Button
                   variant="danger"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -104,7 +110,7 @@ function InstitutionList() {
                   }}
                 >
                   Delete
-                </Button>
+                </Button>)}
               </td>
             </tr>
           ))}
