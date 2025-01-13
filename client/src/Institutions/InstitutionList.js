@@ -91,8 +91,9 @@ function InstitutionList() {
               <td>{institution.city}</td>
               <td>{institution.country}</td>
               <td>{institution.type}</td>
-              <td>
-              {isCoordinator && (<Button
+              {isCoordinator && (
+                <td>
+                  <Button
                   variant="success"
                   className="me-2"
                   onClick={(e) => {
@@ -101,8 +102,8 @@ function InstitutionList() {
                   }}
                 >
                   Edit
-                </Button>)}
-                {isCoordinator && ( <Button
+                </Button>
+  <Button
                   variant="danger"
                   onClick={(e) => {
                     e.stopPropagation();
@@ -110,8 +111,7 @@ function InstitutionList() {
                   }}
                 >
                   Delete
-                </Button>)}
-              </td>
+                </Button> </td>) }
             </tr>
           ))}
         </tbody>

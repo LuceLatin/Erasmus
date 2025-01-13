@@ -8,7 +8,7 @@ const Login = () => {
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
-        e.preventDefault(); // Prevent the default form submission behavior
+        e.preventDefault(); 
 
         const loginData = { email, password };
 
@@ -22,7 +22,6 @@ const Login = () => {
             });
 
             if (response.ok) {
-                alert('Uspješna prijava');
                 navigate("/");
             } else {
                 alert('Netočan email ili password');

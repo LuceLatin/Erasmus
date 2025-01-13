@@ -15,23 +15,22 @@ function AddUser() {
     email: '',
     password: '',
     role: 'student',
-    branch: '', // This will hold the selected branch
+    branch: '', 
   });
 
-  const [branches, setBranches] = useState([]); // State to store branches
+  const [branches, setBranches] = useState([]); 
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  // Fetch branches on component mount
   useEffect(() => {
     const fetchBranches = async () => {
       try {
-        const response = await fetch('/api/allbranches'); // Endpoint for fetching branches
+        const response = await fetch('/api/allbranches');
         const data = await response.json();
         if (data.error) {
           setError(data.error);
         } else {
-          setBranches(data); // Set branches to state
+          setBranches(data); 
         }
       } catch (err) {
         setError('Greška prilikom učitavanja grana');
@@ -51,7 +50,6 @@ function AddUser() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send data to your API endpoint to create the user
     fetch('/api/users/add', {
       method: 'POST',
       headers: {
@@ -61,7 +59,6 @@ function AddUser() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Redirect to user list page on success
         navigate('/users');
       })
       .catch((error) => {

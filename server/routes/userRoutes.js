@@ -6,7 +6,6 @@ import { User } from '../models/User/User.js';
 
 const userRouter = express.Router();
 
-// Get all users
 userRouter.get('/api/users', checkAuthorization, checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const users = await User.find();
@@ -21,7 +20,6 @@ userRouter.post('/api/users/add', checkAuthorization2('koordinator'), async (req
   try {
     const { email, username } = req.body;
 
-    // Check if email or username already exists in the database
     const existingUser = await User.findOne({
       $or: [{ email: email }, { username: username }],
     });
@@ -46,7 +44,6 @@ userRouter.post('/api/users/add', checkAuthorization2('koordinator'), async (req
   }
 });
 
-// Delete user
 userRouter.delete('/api/users/:id', checkAuthorization, checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const { id } = req.params;
@@ -63,16 +60,14 @@ userRouter.delete('/api/users/:id', checkAuthorization, checkAuthorization2('koo
   }
 });
 
-// Edit user
 userRouter.put('/api/users/:id', checkAuthorization, checkAuthorization2('koordinator'), async (req, res) => {
   try {
     const { id } = req.params;
     const { email, username, password, ...otherFields } = req.body;
 
-    // Check if email or username already exists in the database (excluding the current user)
     const existingUser = await User.findOne({
       $or: [{ email }, { username }],
-      _id: { $ne: id }, // Exclude current user
+      _id: { $ne: id },
     });
 
     if (existingUser) {
@@ -104,7 +99,6 @@ userRouter.get('/api/users/:id', async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Find the user by ID
     const user = await User.findById(id);
 
     if (!user) {

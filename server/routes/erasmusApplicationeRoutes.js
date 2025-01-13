@@ -202,7 +202,7 @@ erasmusApplicationRouter.get('/api/:competitionId/applications/:applicationId', 
     const choices = await ApplicantChoices.find({ application: applicationId }).populate('branch').exec();
     const response = {
       ...application.toObject(),
-      files, //return details
+      files, 
       choices,
     };
     return res.status(200).json(response);
@@ -301,7 +301,7 @@ erasmusApplicationRouter.put('/api/erasmus-application/edit', async (req, res) =
         }
       }
     }
-    /*   // Spremi ažuriranu aplikaciju
+    /*  
   await erasmusApplication.save();
 } else {
   console.log('Aplikacija nije pronađena za ažuriranje.');
@@ -315,7 +315,7 @@ erasmusApplicationRouter.put('/api/erasmus-application/edit', async (req, res) =
     if (files.schoolGrades != null){
       
     }*/
-    // Ažuriranje datoteka (pretpostavka da se file upload rješava kroz GridFS)
+    
     // const application = await ErasmusApplication.findById(applicationId);
     // application.files = files.map((file) => file._id); // ažuriraj file ID-eve
     // await application.save();
@@ -434,7 +434,6 @@ erasmusApplicationRouter.get('/api/past-applications', async (req, res) => {
   }
 });
 
-//get and download file
 erasmusApplicationRouter.get('/api/edit-download/:id', async (req, res) => {
   const { bucket } = await connectDB();
 
@@ -449,7 +448,6 @@ erasmusApplicationRouter.get('/api/edit-download/:id', async (req, res) => {
 
     const downloadStream = bucket.openDownloadStream(objectId);
 
-    //if the file exists
     downloadStream
       .pipe(res)
       .on('error', (err) => {
@@ -477,7 +475,7 @@ erasmusApplicationRouter.get('/api/active-applications', async (req, res) => {
       const applications = await ErasmusApplication.find()
         .populate({
           path: 'erasmusCompetition',
-          match: { endDate: { $gte: today } }, // Aktivni natječaji
+          match: { endDate: { $gte: today } }, 
         })
         .populate('user')
         .lean();
@@ -488,7 +486,7 @@ erasmusApplicationRouter.get('/api/active-applications', async (req, res) => {
       const applications = await ErasmusApplication.find({ user: userId })
         .populate({
           path: 'erasmusCompetition',
-          match: { endDate: { $gte: today } }, // Aktivni natječaji za korisnika
+          match: { endDate: { $gte: today } },
         })
         .lean();
 
@@ -515,7 +513,6 @@ erasmusApplicationRouter.get('/api/download/:id', async (req, res) => {
 
     const downloadStream = bucket.openDownloadStream(objectId);
 
-    //if the file exists
     downloadStream
       .pipe(res)
       .on('error', (err) => {

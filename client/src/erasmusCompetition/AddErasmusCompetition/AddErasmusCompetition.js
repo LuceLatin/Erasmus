@@ -24,7 +24,6 @@ function AddErasmusCompetition() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Send data to your API endpoint to create the competition
     fetch('/api/competitions', {
       method: 'POST',
       headers: {
@@ -34,7 +33,6 @@ function AddErasmusCompetition() {
     })
       .then((response) => response.json())
       .then((data) => {
-        // Redirect to competition list page on success
         navigate('/erasmus-competitions/');
       })
       .catch((error) => {

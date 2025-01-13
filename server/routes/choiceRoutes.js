@@ -11,7 +11,6 @@ choiceRouter.get('/api/:applicationId/choices', async (req, res) => {
     try {
       const { applicationId } = req.params;
   
-      // Fetch choices and populate the branch name
       const choices = await ApplicantChoices.find({ application: applicationId })
         .populate('branch', 'name');  
   

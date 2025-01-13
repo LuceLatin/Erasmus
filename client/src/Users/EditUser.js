@@ -15,21 +15,19 @@ function EditUser() {
     email: '',
     password: '',
     role: 'student',
-    branch: '', // This will hold the selected branch
+    branch: '', 
   });
 
   const [branches, setBranches] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-  const { id } = useParams(); // Extract ID from the URL parameters
+  const { id } = useParams();  
   console.log("ID ",id)
 
-  // Fetch user data and branches
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch user details
         const userResponse = await fetch(`/api/users/${id}`);
         const user = await userResponse.json();
         if (user.error) {
@@ -38,7 +36,6 @@ function EditUser() {
           setUserData(user);
         }
 
-        // Fetch branches
         const branchResponse = await fetch('/api/allbranches');
         const branchData = await branchResponse.json();
         if (branchData.error) {

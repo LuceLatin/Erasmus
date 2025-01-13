@@ -67,16 +67,15 @@ branchRoutes.get(
   },
 );
 
-// Ruta za dohvaćanje odjela prema institutionId
 branchRoutes.get('/api/branches', async (req, res) => {
-  const { institution } = req.query; // Uzimamo institutionId iz query parametra
+  const { institution } = req.query; 
 
   if (!institution) {
     return res.status(400).json({ error: 'institutionId is required' });
   }
 
   try {
-    const branches = await Branch.find({ institution }); // Filtriranje po institutionId
+    const branches = await Branch.find({ institution }); 
     res.status(200).json(branches);
   } catch (error) {
     console.error('Error fetching branches:', error);
@@ -84,7 +83,6 @@ branchRoutes.get('/api/branches', async (req, res) => {
   }
 });
 
-// Ruta za dohvaćanje odjela svih institucija
 branchRoutes.get('/api/allbranches', async (req, res) => {
 
   try {
@@ -98,13 +96,11 @@ branchRoutes.get('/api/allbranches', async (req, res) => {
 
 branchRoutes.put('/api/:institutionId/branches/edit/:branchId', checkAuthorization, async (req, res) => {
   try {
-    // Destructure only the fields you want to update from req.body
     const { name, address, city, country } = req.body;
 
-    // Update the branch
     const updatedBranch = await Branch.findByIdAndUpdate(
-      req.params.branchId, // Use branchId from the route
-      { name, address, city, country }, // Only update these fields
+      req.params.branchId, 
+      { name, address, city, country },
       { new: true, runValidators: true },
     );
 

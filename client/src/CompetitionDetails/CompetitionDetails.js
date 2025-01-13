@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {useParams, Link, useNavigate} from 'react-router-dom'; // Dodan 'Link' za navigaciju
+import {useParams, Link, useNavigate} from 'react-router-dom';
 import './CompetitionDetails.css';
 import { jwtDecode } from 'jwt-decode'; 
 import {useGetCurrentUser} from "../hooks/useGetCurrentUser";
@@ -65,7 +65,7 @@ const CompetitionDetails = () => {
                 <p><strong>Vrsta institucije:</strong> {competition.institutionType}</p>
                 <p><strong>Vrijedi za rolu:</strong> {competition.role}</p>
                 {
-                    user?.role === competition?.role && (
+                    user?.role === competition?.role && new Date(competition.Date) > new Date() && (
                         <div className="text-center">
                             <Button onClick={() => navigate(`/erasmus-competitions/${competition._id}/apply`)}
                                     variant="primary">

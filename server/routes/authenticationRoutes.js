@@ -9,7 +9,6 @@ const authenticationRouter = express.Router();
 authenticationRouter.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
-  // Check if user is already logged in
 
   User.findOne({ email: email }).then((user) => {
     if (!user) {
