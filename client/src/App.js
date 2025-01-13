@@ -47,8 +47,8 @@ function App() {
             <div>
                 <Container>
                     <Routes>
-                        <Route path="/" element={<Homepage />} />
                         <Route element={<AuthenticatedRoute user={user} />}>
+                            <Route path="/" element={<Homepage />} />
                             <Route element={<CoordinatorRoute user={user} />}>
                                 <Route path="/institutions/add" element={<AddInstitution />} />
                                 <Route path="/users" element={<UserList />} />
@@ -78,6 +78,7 @@ function App() {
                             <Route path="/results" element={<Results />} />
                         </Route>
                         <Route path="/login" element={<Login />} />
+                        <Route path="/" element={<Login />} />
                         <Route path="/..." element={<Navigate to="/" />} /> {/* Redirect unknown routes */}
                     </Routes>
                 </Container>

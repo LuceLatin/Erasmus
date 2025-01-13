@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Form, Button, Container, Alert } from 'react-bootstrap';
 import { useNavigate, useParams } from 'react-router-dom';
+import {formatDate} from "../erasmusCompetition/EditErasmusCompetition/EditErasmusCompetition";
 
 function EditUser() {
   const [userData, setUserData] = useState({
@@ -131,7 +132,7 @@ function EditUser() {
           <Form.Control
             type="date"
             name="dateOfBirth"
-            value={userData.dateOfBirth}
+            value={formatDate(userData.dateOfBirth)}
             onChange={handleChange}
             required
           />
