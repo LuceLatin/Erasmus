@@ -8,12 +8,12 @@ import { connectDB } from './dbInstance.js';
 import authenticationRouter from './routes/authenticationRoutes.js';
 import branchRoutes from './routes/branchRoutes.js';
 import categoryRouter from './routes/categoryRoutes.js';
+import choiceRouter from './routes/choiceRoutes.js';
 import { erasmusApplicationRouter } from './routes/erasmusApplicationeRoutes.js';
 import erasmusCompetitionRouter from './routes/erasmusCompetition.js';
 import institutionRoutes from './routes/institutionRoutes.js';
 import userRouter from './routes/userRoutes.js';
 import { seedDb } from './seed/seed.js';
-import choiceRouter from './routes/choiceRoutes.js';
 dotenv.config();
 
 app.use(cors());
